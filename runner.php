@@ -7,7 +7,7 @@ require_once 'browser/parser/ParseException.php';
 use \RuntimeException;
 use tplLib\ParseException;
 
-function runTests() {
+function runTests(?PointsReporter $reporter) {
     $total = 0;
     $successful = 0;
 
@@ -42,6 +42,10 @@ function runTests() {
     }
 
     printf("%s of %s tests passed.\n", $successful, $total);
+
+    if ($reporter) {
+        $reporter->execute($successful);
+    }
 }
 
 function getTestNames() : array {

@@ -5,6 +5,7 @@ require_once 'util.php';
 require_once 'dsl.php';
 require_once 'constants.php';
 require_once 'browser/Browser.php';
+include_once 'PointsReporter.php';
 require_once 'Settings.php';
 
 function assertThrows($function): void {
@@ -89,7 +90,7 @@ function assertPageContainsText($textToBeFound) : void {
         return;
     }
 
-    fail(sprintf("Did not find text %s on current page", $textToBeFound));
+    fail(ERROR_C01, sprintf("Did not find text %s on current page", $textToBeFound));
 }
 
 function assertCurrentUrl($expected) : void {
