@@ -35,7 +35,7 @@ class FileParser {
         return $builder->getResult();
     }
 
-    private function error($e) {
+    private function error($e): RuntimeException {
         $message = sprintf("%s \nat %s:%s\n",
             $e->message,
             realpath($this->filePath),
@@ -44,7 +44,7 @@ class FileParser {
         return new RuntimeException($message);
     }
 
-    private function locationString($pos) {
+    private function locationString($pos): string {
         $textParsed = substr($this->input, 0, $pos);
         $lines = explode("\n", $textParsed);
         $lineNr = count($lines);

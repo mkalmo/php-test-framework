@@ -2,6 +2,8 @@
 
 require_once 'runner.php';
 require_once 'util.php';
+require_once 'dsl.php';
+require_once 'constants.php';
 require_once 'browser/Browser.php';
 require_once 'Settings.php';
 
@@ -15,13 +17,13 @@ function assertThrows($function): void {
     throw new AssertionError("Expected to throw but did not");
 }
 
-function fail($message): void {
-    throw new AssertionError($message);
+function fail($code, $message): void {
+    throw new stf\FrameworkException($code, $message);
 }
 
 function assertThat($actual, $expected): void {
     if ($actual !== $expected) {
-        throw new AssertionError(
+        throw new stf\FrameworkException(ERROR_C02,
             sprintf("Expected %s but was %s",
                 stf\asString($expected), stf\asString($actual)));
     }
@@ -51,6 +53,10 @@ function getSettings() : stf\Settings {
     return $GLOBALS[$key] = $GLOBALS[$key] ?? new stf\Settings();
 }
 
+function getResponseCode() : int {
+    return getBrowser()->getResponseCode();
+}
+
 function getCurrentUrl() : string {
     return getBrowser()->getCurrentUrl();
 }
@@ -63,6 +69,17 @@ function printPageSource() : void {
 function printPageText() : void {
     $page = getBrowser()->getPage();
     print $page->getText() . PHP_EOL;
+}
+
+function assertPageContainsLinkWithId($linkId) : void {
+    $link = getBrowser()->getPage()->getLinkById($linkId);
+
+    if ($link === null) {
+        fail(ERROR_W03,
+            sprintf("Current page does not contain link with id '%s'.", $linkId));
+    }
+
+
 }
 
 function assertPageContainsText($textToBeFound) : void {
@@ -93,26 +110,11 @@ function clickLinkByText($text) : void {
 }
 
 function clickLinkById($linkId) : void {
+    assertPageContainsLinkWithId($linkId);
 
     $link = getBrowser()->getPage()->getLinkById($linkId);
 
-
-    if ($link === null) {
-        try {
-            error('no link with id: ' . $linkId);
-        } catch (RuntimeException $e) {
-            var_dump($e->getTrace());
-
-            print $e->getMessage() . PHP_EOL;
-        }
-
-    }
-
-//    getBrowser()->navigateTo($link->getHref());
-}
-
-function error($message) {
-    throw new RuntimeException($message);
+    navigateTo($link->getHref());
 }
 
 function navigateTo(string $url) {

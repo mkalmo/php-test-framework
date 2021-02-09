@@ -20,6 +20,7 @@ require_once dirname(__FILE__) . '/compatibility.php';
 class SimpleStickyError
 {
     private $error = 'Constructor not chained';
+    private $errorCode = '';
 
     /**
      *    Sets the error to empty.
@@ -51,14 +52,21 @@ class SimpleStickyError
         return $this->error;
     }
 
+    public function getErrorCode(): string {
+        return $this->errorCode;
+    }
+
     /**
      *    Sets the internal error.
      *    @param string       Error message to stash.
      *    @access protected
      */
-    public function setError($error)
-    {
+    public function setError($error) {
         $this->error = $error;
+    }
+
+    public function setErrorCode($errorCode): void {
+        $this->errorCode = $errorCode;
     }
 
     /**

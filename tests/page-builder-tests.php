@@ -2,6 +2,15 @@
 
 require_once '../public-api.php';
 
+function buildPage() {
+
+    $html = file_get_contents('../test-files/form.html');
+
+    $page = (new stf\PageBuilder($html))->getPage();
+
+    assertThat($page->getId(), is('form-page-id'));
+}
+
 function buildForm() {
 
     $html = file_get_contents('../test-files/form.html');

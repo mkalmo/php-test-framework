@@ -8,6 +8,7 @@ class Page {
     private string $text;
     private array $links;
     private ?Form $form;
+    private ?string $id;
 
     public function __construct(
         string $source, string $text, array $links, ?Form $form) {
@@ -16,6 +17,14 @@ class Page {
         $this->text = $text;
         $this->links = $links;
         $this->form = $form;
+    }
+
+    public function setId(?string $id): void {
+        $this->id = $id;
+    }
+
+    public function getId(): ?string {
+        return $this->id;
     }
 
     public function getForm(): Form {

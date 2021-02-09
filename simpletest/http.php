@@ -538,6 +538,7 @@ class SimpleHttpResponse extends SimpleStickyError
         $raw = $this->readAll($socket);
         if ($socket->isError()) {
             $this->setError('Error reading socket [' . $socket->getError() . ']');
+            $this->setErrorCode(ERROR_W01);
             return;
         }
         $this->parse($raw);
@@ -622,7 +623,7 @@ class SimpleHttpResponse extends SimpleStickyError
      *    @return SimpleHttpHeaders        Wrapped header block.
      *    @access public
      */
-    public function getHeaders() : SimpleHttpHeaders
+    public function getHeaders() : ?SimpleHttpHeaders
     {
         return $this->headers;
     }

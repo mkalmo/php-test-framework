@@ -1,5 +1,12 @@
 <?php
 
+const MAX_POINTS = 5;
+const RESULT_PATTERN = "\nRESULT: %s of %s POINTS\n";
+
+function getPageId() : ?string {
+    return getBrowser()->getPage()->getId();
+}
+
 class Author {
     public $firstName;
     public $lastName;

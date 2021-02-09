@@ -18,6 +18,7 @@ require_once 'Link.php';
 
 require_once 'FormBuilder.php';
 
+use Exception;
 use tplLib\HtmlLexer;
 use tplLib\HtmlParser;
 use tplLib\TextNode;
@@ -37,8 +38,12 @@ class PageBuilder {
     function getPage() : Page {
         $text = html_entity_decode($this->getText($this->tree));
 
-        return new Page($this->html, $text,
+        $page = new Page($this->html, $text,
             $this->getLinks($this->tree), $this->getForm());
+
+        $page->setId($this->getPageId());
+
+        return $page;
     }
 
     private function getForm() : ?Form {
@@ -59,13 +64,34 @@ class PageBuilder {
     }
 
     private function buildNodeTree($html) {
-        $tokens = (new HtmlLexer($html))->tokenize();
+        try {
+            $tokens = (new HtmlLexer($html))->tokenize();
 
-        $builder = new TreeBuilderActions();
+            $builder = new TreeBuilderActions();
 
-        (new HtmlParser($tokens, $builder))->parse();
+            (new HtmlParser($tokens, $builder))->parse();
+
+        } catch (Exception $e) {
+            throw $this->error($e);
+        }
 
         return $builder->getResult();
+    }
+
+    private function error($e): RuntimeException {
+        $message = sprintf("Incorrect HTML at %s \n %s\n",
+            $this->locationString($e->pos), $e->message);
+
+        return new FrameworkException(ERROR_W02, $message);
+    }
+
+    private function locationString($pos): string {
+        $textParsed = substr($this->html, 0, $pos);
+        $lines = explode("\n", $textParsed);
+        $lineNr = count($lines);
+        $colNr = strlen($lines[$lineNr - 1]) + 1; // +1: starts from 1
+
+        return sprintf('line %s, column %s', $lineNr, $colNr);
     }
 
     private function findNodesByTagNames($node, $names) : array {
@@ -117,6 +143,16 @@ class PageBuilder {
         $childTexts = array_filter($childTexts);
 
         return join("\n", $childTexts);
+    }
+
+    private function getPageId(): ?string {
+        $bodyNodes = $this->findNodesByTagNames($this->tree, ['body']);
+
+        if (count($bodyNodes) < 1) {
+            return null;
+        }
+
+        return $bodyNodes[0]->getAttributeValue('id');
     }
 
 }

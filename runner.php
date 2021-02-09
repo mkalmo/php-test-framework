@@ -2,7 +2,10 @@
 
 namespace stf;
 
-use Error;
+require_once 'browser/parser/ParseException.php';
+
+use \RuntimeException;
+use tplLib\ParseException;
 
 function runTests() {
     $total = 0;
@@ -22,10 +25,20 @@ function runTests() {
 
             printf("%s() OK\n", $testName);
 
-        } catch (Error $e) {
-            printf("\n#### Test %s() failed ####\n\n %s\n\n", $testName, $e);
-        }
+        } catch (ParseException $ex) {
+            printf("### ERROR: %s ####\n", ERROR_W02);
+            printf("Found incorrect HTML \n");
+            printf("%s \n", $ex->getMessage());
+            printf("Position %s \n", $ex->pos);
 
+            printf("\n### Test %s() failed ###\n\n", $testName);
+        } catch (FrameworkException $ex) {
+            printf("### ERROR: %s ####\n", $ex->getCode());
+            printf("%s \n", $ex->getMessage());
+            printf("\n### Test %s() failed ###\n\n", $testName);
+        } catch (RuntimeException $e) {
+            printf("\n### Test %s() failed ###\n\n %s\n\n", $testName, $e);
+        }
     }
 
     printf("%s of %s tests passed.\n", $successful, $total);

@@ -12,6 +12,7 @@ class Browser {
 
     private Url $currentUrl;
     private Page $page;
+    private int $responseCode;
     private Settings $settings;
 
     public function __construct(Settings $settings) {
@@ -28,6 +29,10 @@ class Browser {
 
     public function getPage() : Page {
         return $this->page;
+    }
+
+    public function getResponseCode(): int {
+        return $this->responseCode;
     }
 
     function navigateTo(string $destination) {
@@ -50,8 +55,6 @@ class Browser {
 
         $this->currentUrl = $request->getFullUrl();
 
-//        var_dump($this->settings->logRequests);
-
         if ($this->settings->logRequests) {
             printf("%s (%s)" . PHP_EOL,
                 $request->getFullUrl()->asString(), $response->code);
@@ -59,6 +62,7 @@ class Browser {
 
         $page = (new PageBuilder($response->contents))->getPage();
 
+        $this->responseCode = $response->code;
         $this->page = $page;
     }
 

@@ -3,6 +3,7 @@
 namespace stf;
 
 include_once __DIR__ . '/../simpletest/user_agent.php';
+include_once __DIR__ . '/../FrameworkException.php';
 
 include_once 'Response.php';
 
@@ -31,7 +32,8 @@ class HttpClient {
         $headers = $response->getHeaders();
 
         if ($response->isError()) {
-            throw new RuntimeException($response->getError());
+            throw new FrameworkException($response->getErrorCode(),
+                $response->getError());
         }
 
         return new Response($headers->getResponseCode(), $response->getContent());
