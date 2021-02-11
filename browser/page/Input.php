@@ -6,7 +6,7 @@ require_once 'AbstractInput.php';
 
 class Input extends AbstractInput {
 
-    public function __toString() {
+    public function __toString() : string {
         return sprintf("Input: %s %s",
             $this->getName(), $this->getValue());
     }

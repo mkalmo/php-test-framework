@@ -29,15 +29,15 @@ class FormBuilder {
     public function buildForm() : Form {
         $form = new Form();
 
-        $form->setAction($this->formNode->getAttributeValue('action'));
-        $form->setMethod($this->formNode->getAttributeValue('method'));
+        $form->setAction($this->formNode->getAttributeValue('action') ?? '');
+        $form->setMethod($this->formNode->getAttributeValue('method') ?? '');
 
         foreach ($this->formElements as $element) {
             if ($this->isButton($element)) {
                 $form->addButton($this->createButton($element));
             } else {
-                $name = $element->getAttributeValue('name');
-                $value = $element->getAttributeValue('value');
+                $name = $element->getAttributeValue('name') ?? '';
+                $value = $element->getAttributeValue('value') ?? '';
 
                 $form->addField(new Input($name, $value));
             }
@@ -55,9 +55,9 @@ class FormBuilder {
             || $element->getTagName() === 'input'
                && $element->getAttributeValue('type') === 'submit') {
 
-            $name = $element->getAttributeValue('name');
-            $value = $element->getAttributeValue('value');
-            $formAction = $element->getAttributeValue('formaction');
+            $name = $element->getAttributeValue('name') ?? '';
+            $value = $element->getAttributeValue('value') ?? '';
+            $formAction = $element->getAttributeValue('formaction') ?? '';
 
             return new Button($name, $value, $formAction);
 
