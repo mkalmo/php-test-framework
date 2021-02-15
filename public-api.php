@@ -5,6 +5,7 @@ require_once 'util.php';
 require_once 'dsl.php';
 require_once 'constants.php';
 require_once 'browser/Browser.php';
+require_once 'browser/page/Form.php';
 include_once 'PointsReporter.php';
 require_once 'Settings.php';
 
@@ -22,12 +23,15 @@ function fail($code, $message): void {
     throw new stf\FrameworkException($code, $message);
 }
 
-function assertThat($actual, $expected): void {
-    if ($actual !== $expected) {
-        throw new stf\FrameworkException(ERROR_C02,
-            sprintf("Expected %s but was %s",
-                stf\asString($expected), stf\asString($actual)));
+function assertThat($actual, $expected, $message = ''): void {
+    if ($actual === $expected) {
+        return;
     }
+
+    $message = $message ?? sprintf("Expected %s but was %s",
+            stf\asString($expected), stf\asString($actual));
+
+    throw new stf\FrameworkException(ERROR_C02, $message);
 }
 
 function is($value) {
@@ -58,6 +62,16 @@ function getResponseCode() : int {
     return getBrowser()->getResponseCode();
 }
 
+function getForm() : stf\Form {
+    $form = getBrowser()->getPage()->getForm();
+
+    if ($form === null) {
+        fail(ERROR_W07, "Current page does not contain form");
+    }
+
+    return $form;
+}
+
 function getCurrentUrl() : string {
     return getBrowser()->getCurrentUrl();
 }
@@ -79,8 +93,35 @@ function assertPageContainsLinkWithId($linkId) : void {
         fail(ERROR_W03,
             sprintf("Current page does not contain link with id '%s'.", $linkId));
     }
+}
 
+function assertPageContainsInputWithName($name) : void {
+    $field = getForm()->getFieldByName($name);
 
+    if ($field === null) {
+        fail(ERROR_W05,
+            sprintf("Current page does not contain input with name '%s'.",
+                $name));
+    }
+}
+
+function assertPageContainsButtonWithName($name) : void {
+    $field = getForm()->getButtonByName($name);
+
+    if ($field === null) {
+        fail(ERROR_W06,
+            sprintf("Current page does not contain button with name '%s'.",
+                $name));
+    }
+}
+
+function assertPageContainsLinkWithText($text) : void {
+    $link = getBrowser()->getPage()->getLinkByText($text);
+
+    if ($link === null) {
+        fail(ERROR_W03,
+            sprintf("Current page does not contain link with text '%s'.", $text));
+    }
 }
 
 function assertPageContainsText($textToBeFound) : void {
@@ -96,18 +137,24 @@ function assertPageContainsText($textToBeFound) : void {
 function assertCurrentUrl($expected) : void {
     $actual = getBrowser()->getCurrentUrl();
 
-    assertThat($actual, is($expected));
+    if ($actual !== $expected) {
+        fail(ERROR_W10, sprintf("Expected url to be %s but was %s",
+            $expected, $actual));
+    }
 }
 
 function clickLinkByText($text) : void {
+    assertPageContainsLinkWithText($text);
 
     $link = getBrowser()->getPage()->getLinkByText($text);
 
-    if ($link === null) {
-        throw new RuntimeException('no link with text: ' . $text);
-    }
-
     getBrowser()->navigateTo($link->getHref());
+}
+
+function getLinkHrefByText($text) : string {
+    assertPageContainsLinkWithText($text);
+
+    return getBrowser()->getPage()->getLinkByText($text)->getHref();
 }
 
 function clickLinkById($linkId) : void {
@@ -127,13 +174,5 @@ function clickButton(string $buttonName) {
 }
 
 function setFieldValue(string $fieldName, string $value) {
-    $page = getBrowser()->getPage();
-
-    if (!$page->containsForm()) {
-        throw new RuntimeException("Page does not contain a form");
-    }
-
-    $form = $page->getForm();
-
-    $form->setFieldValue($fieldName, $value);
+    getForm()->setFieldValue($fieldName, $value);
 }

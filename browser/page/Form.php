@@ -2,8 +2,6 @@
 
 namespace stf;
 
-use \RuntimeException;
-
 class Form {
 
     private string $action = '';
@@ -27,34 +25,24 @@ class Form {
         $this->getFieldByName($fieldName)->setValue($value);
     }
 
-    public function getButtonByName($buttonName) : Button {
+    public function getButtonByName($buttonName) : ?Button {
         $buttons = array_filter($this->buttons, function ($button) use ($buttonName) {
             return $button->getName() === $buttonName;
         });
 
         $button = array_shift($buttons);
 
-        if (!$button) {
-            throw new RuntimeException(
-                sprintf("button with name %s does not exist", $buttonName));
-        }
-
-        return $button;
+        return $button ?? null;
     }
 
-    public function getFieldByName($fieldName) : Input {
+    public function getFieldByName($fieldName) : ?Input {
         $fields = array_filter($this->fields, function ($field) use ($fieldName) {
             return $field->getName() === $fieldName;
         });
 
         $field = array_shift($fields);
 
-        if (!$field) {
-            throw new RuntimeException(
-                sprintf("field with name %s does not exist", $fieldName));
-        }
-
-        return $field;
+        return $field ?? null;
     }
 
     public function getAction() : ?string {

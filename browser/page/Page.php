@@ -27,7 +27,7 @@ class Page {
         return $this->id;
     }
 
-    public function getForm(): Form {
+    public function getForm(): ?Form {
         return $this->form;
     }
 
