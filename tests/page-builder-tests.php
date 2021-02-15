@@ -2,6 +2,16 @@
 
 require_once '../public-api.php';
 
+function buildPageSimple() {
+    $html = '<a id="link1"> abc</a>';
+
+    $page = (new stf\PageBuilder($html))->getPage();
+
+    $link = $page->getLinkById('link1');
+
+    assertThat($link->getText(), is(' abc'));
+}
+
 function buildPage() {
 
     $html = file_get_contents('../test-files/form.html');
@@ -25,4 +35,4 @@ function buildForm() {
     assertThat($form->getAction(), is('params.php?a=1'));
 }
 
-stf\runTests();
+stf\runTests(new \stf\PointsReporter([]));

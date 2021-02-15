@@ -62,4 +62,4 @@ function rootLink() {
     assertCurrentUrl(BASE_URL . "/a/a.html");
 }
 
-stf\runTests();
+stf\runTests(new \stf\PointsReporter([]));

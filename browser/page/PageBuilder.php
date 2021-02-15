@@ -22,6 +22,7 @@ use Exception;
 use tplLib\HtmlLexer;
 use tplLib\HtmlParser;
 use tplLib\TextNode;
+use tplLib\WsNode;
 use tplLib\TreeBuilderActions;
 use \RuntimeException;
 
@@ -119,30 +120,27 @@ class PageBuilder {
     }
 
     private function getLinkText($linkNode) : string {
-        $text = '';
-
-        $textNodes = $this->findNodesByTagNames($linkNode, ['']);
-
-        foreach ($textNodes as $textNode) {
-            $text .= $textNode->getText();
-        }
-
-        return $text;
+        return join("", $this->getTextLines($linkNode, true));
     }
 
-    private function getText($node) {
+    private function getText($node) : string {
+        return join("\n", $this->getTextLines($node));
+    }
+
+    private function getTextLines($node, $withWhiteSpace = false) : array {
         if ($node instanceof TextNode) {
-            return $node->getText();
+            return [$node->getText()];
+        } else if ($withWhiteSpace && $node instanceof WsNode) {
+            return [$node->getText()];
         }
 
         $childTexts = [];
         foreach ($node->getChildren() as $child) {
-            $childTexts[] = $this->getText($child);
+            $childTextLines = $this->getTextLines($child, $withWhiteSpace);
+            $childTexts = [...$childTexts, ...$childTextLines];
         }
 
-        $childTexts = array_filter($childTexts);
-
-        return join("\n", $childTexts);
+        return array_filter($childTexts);
     }
 
     private function getPageId(): ?string {
