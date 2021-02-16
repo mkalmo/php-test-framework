@@ -10,5 +10,7 @@ const ERROR_W04 = 'W04'; // no link with text
 const ERROR_W05 = 'W05'; // no input with name
 const ERROR_W06 = 'W06'; // no button with name
 const ERROR_W07 = 'W07'; // no form on page
+const ERROR_W08 = 'W08'; // no form on page
+const ERROR_W09 = 'W09'; // field does not contain this value
 
 const ERROR_W10 = 'W10'; // current url is not correct

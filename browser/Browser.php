@@ -60,13 +60,16 @@ class Browser {
                 $request->getFullUrl()->asString(), $response->code);
         }
 
+        if ($this->settings->logPostParameters && $request->isPostMethod()) {
+            printf("POST parameters: %s" . PHP_EOL,
+                mapAsString($request->getParameters()));
+        }
+
         $page = (new PageBuilder($response->contents))->getPage();
 
         $this->responseCode = $response->code;
         $this->page = $page;
     }
-
-
 
 }
 

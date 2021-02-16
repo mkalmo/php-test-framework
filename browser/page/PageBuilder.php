@@ -15,14 +15,17 @@ require_once 'Input.php';
 require_once 'Button.php';
 require_once 'Page.php';
 require_once 'Link.php';
+require_once 'Element.php';
 
 require_once 'FormBuilder.php';
 
 use Exception;
 use tplLib\HtmlLexer;
 use tplLib\HtmlParser;
+use tplLib\TagNode;
 use tplLib\TextNode;
 use tplLib\WsNode;
+use tplLib\AbstractNode;
 use tplLib\TreeBuilderActions;
 use \RuntimeException;
 
@@ -42,7 +45,7 @@ class PageBuilder {
         $page = new Page($this->html, $text,
             $this->getLinks($this->tree), $this->getForm());
 
-        $page->setId($this->getPageId());
+        $page->setElements($this->getAllElements($this->tree));
 
         return $page;
     }
@@ -96,27 +99,45 @@ class PageBuilder {
     }
 
     private function findNodesByTagNames($node, $names) : array {
+        $nodeList = array_filter($this->getAllTagNodes($node), function ($each) use ($names) {
+            return in_array($each->getTagName(), $names);
+        });
+
+        return array_values($nodeList);
+    }
+
+    private function getAllElements(AbstractNode $node) : array {
+        $nodes = $this->getAllTagNodes($node);
+
+        return array_map(function ($node) {
+            return new Element($node);
+        }, $nodes);
+    }
+
+    private function getAllTagNodes(AbstractNode $node) : array {
         $result = [];
 
-        if (in_array($node->getTagName(), $names)) {
+        if ($node instanceof TagNode) {
             $result[] = $node;
         }
 
         foreach ($node->getChildren() as $child) {
-            $result = array_merge($result, $this->findNodesByTagNames($child, $names));
+            $result = array_merge(
+                $result,
+                $this->getAllTagNodes($child));
         }
 
         return $result;
     }
 
     private function getLinks($tree) : array {
-        $linkNodes = $this->findNodesByTagNames($tree, ['a']);
+        $nodes = $this->findNodesByTagNames($tree, ['a']);
 
         return array_map(function ($linkNode) {
             return new Link($this->getLinkText($linkNode),
                 $linkNode->getAttributeValue('href'),
                 $linkNode->getAttributeValue('id'));
-        }, $linkNodes);
+        }, $nodes);
     }
 
     private function getLinkText($linkNode) : string {
@@ -142,17 +163,6 @@ class PageBuilder {
 
         return array_filter($childTexts);
     }
-
-    private function getPageId(): ?string {
-        $bodyNodes = $this->findNodesByTagNames($this->tree, ['body']);
-
-        if (count($bodyNodes) < 1) {
-            return null;
-        }
-
-        return $bodyNodes[0]->getAttributeValue('id');
-    }
-
 }
 
 

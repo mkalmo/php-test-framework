@@ -8,7 +8,7 @@ class Page {
     private string $text;
     private array $links;
     private ?Form $form;
-    private ?string $id;
+    private array $elements = [];
 
     public function __construct(
         string $source, string $text, array $links, ?Form $form) {
@@ -19,12 +19,26 @@ class Page {
         $this->form = $form;
     }
 
-    public function setId(?string $id): void {
-        $this->id = $id;
+    public function setElements(array $elements): void {
+        $this->elements = $elements;
+    }
+
+    public function getElements(): array {
+        return $this->elements;
     }
 
     public function getId(): ?string {
-        return $this->id;
+        $nodeList = array_filter($this->elements, function ($each) {
+            return strtolower($each->getTagName()) === 'body';
+        });
+
+        $nodeList = array_values($nodeList);
+
+        if (count($nodeList) < 1) {
+            return null;
+        }
+
+        return $nodeList[0]->getId();
     }
 
     public function getForm(): ?Form {

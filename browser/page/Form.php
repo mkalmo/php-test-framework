@@ -25,6 +25,10 @@ class Form {
         $this->getFieldByName($fieldName)->setValue($value);
     }
 
+    public function getFieldValue(string $fieldName) : string {
+        return $this->getFieldByName($fieldName)->getValue();
+    }
+
     public function getButtonByName($buttonName) : ?Button {
         $buttons = array_filter($this->buttons, function ($button) use ($buttonName) {
             return $button->getName() === $buttonName;

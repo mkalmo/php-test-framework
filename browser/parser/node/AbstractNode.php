@@ -4,33 +4,29 @@ namespace tplLib;
 
 abstract class AbstractNode {
 
-    protected $name;
+    protected ?string $name;
 
-    protected $children = [];
+    protected array $children = [];
 
-    public function __construct($name) {
+    public function __construct(?string $name) {
         $this->name = $name;
     }
 
     public abstract function render($scope);
 
-    public function getTagName() {
+    public function getTagName() : ?string {
         return $this->name;
     }
 
-    public function getTokenContents() {
-        return $this->name->getContents();
-    }
-
-    public function getChildren() {
+    public function getChildren() : array {
         return $this->children;
     }
 
-    public function addChild($child) {
+    public function addChild($child) : void {
         $this->children[] = $child;
     }
 
-    public function addChildren($children) {
+    public function addChildren($children) : void {
         $this->children = array_merge($this->children, $children);
     }
 

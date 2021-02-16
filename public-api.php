@@ -46,6 +46,10 @@ function logRequests(bool $flag) : void {
     getSettings()->logRequests = $flag;
 }
 
+function logPostParameters(bool $flag) : void {
+    getSettings()->logPostParameters = $flag;
+}
+
 function getBrowser() : stf\Browser {
     $key = "---STF-BROWSER---";
 
@@ -124,6 +128,19 @@ function assertPageContainsLinkWithText($text) : void {
     }
 }
 
+function assertPageContainsElementWithId($id) : void {
+    $elements = getBrowser()->getPage()->getElements();
+
+    foreach ($elements as $element) {
+        if ($element->getId() === $id) {
+            return;
+        }
+    }
+
+    fail(ERROR_W08,
+        sprintf("Current page does not contain element with id '%s'.", $id));
+}
+
 function assertPageContainsText($textToBeFound) : void {
     $pageText = getBrowser()->getPage()->getText();
 
@@ -175,4 +192,13 @@ function clickButton(string $buttonName) {
 
 function setFieldValue(string $fieldName, string $value) {
     getForm()->setFieldValue($fieldName, $value);
+}
+
+function assertFieldValue(string $fieldName, string $expected) {
+    $actual = getForm()->getFieldValue($fieldName);
+
+    if ($actual !== $expected) {
+        fail(ERROR_W09, sprintf("Expected value to be '%s' but it was '%s'",
+            $expected, $actual));
+    }
 }

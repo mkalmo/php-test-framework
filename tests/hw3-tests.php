@@ -8,12 +8,10 @@ const BASE_URL = 'http://localhost:8080';
 setBaseUrl(BASE_URL);
 logRequests(false);
 
-function _submittingFormAddsPersonToList() {
+function submittingFormAddsPersonToList() {
     navigateTo('/');
 
-    clickLinkById('book-form-link1');
-
-    return;
+    clickLinkById('book-form-link');
 
     $book = getSampleBook();
 
