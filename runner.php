@@ -4,6 +4,7 @@ namespace stf;
 
 require_once 'browser/parser/ParseException.php';
 
+use Exception;
 use \RuntimeException;
 use tplLib\ParseException;
 
@@ -35,6 +36,7 @@ function runTests(?PointsReporter $reporter = null) {
         } catch (FrameworkException $ex) {
             printf("### ERROR: %s ####\n", $ex->getCode());
             printf("%s \n", $ex->getMessage());
+            printf("Stack trace: \n%s\n", getStackTrace($ex, $testName));
             printf("\n### Test %s() failed ###\n\n", $testName);
         } catch (RuntimeException $e) {
             printf("\n### Test %s() failed ###\n\n %s\n\n", $testName, $e);
@@ -47,6 +49,26 @@ function runTests(?PointsReporter $reporter = null) {
         $reporter->execute($successful);
     }
 }
+
+function getStackTrace(Exception $ex, string $testName) : string {
+    $result = '';
+
+    foreach ($ex->getTrace() as $line) {
+        $functionName = $line['function'] ?? '';
+        $lineNr = $line['line'] ?? '';
+        $filePath = $line['file'] ?? '';
+
+        if ($functionName === $testName) {
+            break;
+        }
+
+        $result .= sprintf("  %s() on line %s: %s(%s)\n",
+            $functionName, $lineNr,  $filePath, $lineNr);
+    }
+
+    return $result;
+}
+
 
 function getTestNames() : array {
     $testFilePath = get_included_files()[0];

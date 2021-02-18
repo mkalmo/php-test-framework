@@ -3,6 +3,8 @@
 namespace stf;
 
 require_once 'RadioGroup.php';
+require_once 'Checkbox.php';
+require_once 'TextField.php';
 
 class Form {
 
@@ -33,13 +35,14 @@ class Form {
         return $button ?? null;
     }
 
-    public function getFieldByName($fieldName) : ?AbstractInput {
-        return $this->getFieldByNameCommon($fieldName);
+    public function getTextFieldByName($fieldName) : ?TextField {
+        return $this->getFieldByNameCommon($fieldName, TextField::class);
     }
 
-    private function getFieldByNameCommon($fieldName) {
-        $fields = array_filter($this->fields, function ($field) use ($fieldName) {
-            return $field->getName() === $fieldName;
+    private function getFieldByNameCommon($fieldName, $type) {
+        $fields = array_filter($this->fields, function ($field) use ($fieldName, $type) {
+            return $field->getName() === $fieldName
+                    && (get_class($field) === $type || is_subclass_of($field, $type));
         });
 
         $field = array_shift($fields);
@@ -48,7 +51,15 @@ class Form {
     }
 
     public function getRadioByName($fieldName) : ?RadioGroup {
-        return $this->getFieldByNameCommon($fieldName);
+        return $this->getFieldByNameCommon($fieldName, RadioGroup::class);
+    }
+
+    public function getFieldByName($fieldName) : ?AbstractInput {
+        return $this->getFieldByNameCommon($fieldName, AbstractInput::class);
+    }
+
+    public function getCheckboxByName($fieldName) : Checkbox {
+        return $this->getFieldByNameCommon($fieldName, Checkbox::class);
     }
 
     public function getAction() : ?string {

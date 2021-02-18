@@ -9,7 +9,7 @@ setBaseUrl(BASE_URL);
 function submitForm() {
     navigateTo('/form.html');
 
-    setFieldValue('lastName', 'Smith');
+    setTextFieldValue('lastName', 'Smith');
 
     clickButton('submitButton');
 

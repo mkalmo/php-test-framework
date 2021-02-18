@@ -123,7 +123,7 @@ class TagNode extends AbstractNode {
         return $result;
     }
 
-    public function getAttributeValue($name) {
+    public function getAttributeValue($name) : ?string {
         foreach ($this->attributes as $key => $value) {
             if ($key === $name) {
                 return $this->stripQuotes($value);
@@ -133,7 +133,7 @@ class TagNode extends AbstractNode {
         return null;
     }
 
-    public function hasAttribute($name) {
+    public function hasAttribute($name) : bool {
         foreach ($this->attributes as $key => $value) {
             if ($key === $name) {
                 return true;
@@ -143,17 +143,17 @@ class TagNode extends AbstractNode {
         return false;
     }
 
-    private function formatAttribute($name, $value) {
+    private function formatAttribute($name, $value) : string {
         return $value === null
             ? sprintf(' %s', $name)
             : sprintf(' %s=%s', $name, $value);
     }
 
-    protected function getExpression($attributeName) {
+    protected function getExpression($attributeName) : string {
         return $this->stripQuotes($this->attributes[$attributeName]);
     }
 
-    private function stripQuotes($string) {
+    private function stripQuotes($string) : string {
         $string = preg_replace("/^['\"]/", '', $string);
         return preg_replace("/['\"]$/", '', $string);
     }

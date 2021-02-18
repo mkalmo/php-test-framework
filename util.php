@@ -13,9 +13,11 @@ function mapAsString(array $map) : string {
 
 function asString($value) : string {
     if (gettype($value) === 'boolean') {
-        return $value ? 'true' : 'false';
+        return $value ? 'TRUE' : 'FALSE';
     } else if (gettype($value) === 'NULL') {
         return 'NULL';
+    } else if (gettype($value) === 'string') {
+        return sprintf("'%s'", $value);
     } else if ($value === '') {
         return '<EMPTY STRING>';
     }

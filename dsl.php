@@ -4,19 +4,19 @@ const MAX_POINTS = 5;
 const RESULT_PATTERN = "\nRESULT: %s of %s POINTS\n";
 
 function getPageId() : ?string {
-    return getBrowser()->getPage()->getId();
+    return stf\getBrowser()->getPage()->getId();
 }
 
 class Author {
-    public $firstName;
-    public $lastName;
-    public $grade;
+    public string $firstName;
+    public string $lastName;
+    public string $grade;
 }
 
 class Book {
-    public $title;
-    public $grade;
-    public $isRead;
+    public string $title;
+    public string $grade;
+    public string $isRead;
 }
 
 function getSampleAuthor() : Author {

@@ -6,52 +6,73 @@ require_once '../dsl.php';
 const BASE_URL = 'http://localhost:8080';
 
 setBaseUrl(BASE_URL);
-logRequests(true);
-logPostParameters(true);
+logRequests(false);
 
-function displaysErrorWhenSubmittingInvalidBookData() {
+function submittingFormAddsPersonToList() {
+    navigateTo(BASE_URL);
 
-    navigateTo('/');
+    clickLinkWithId('book-form-link');
 
-    clickLinkById('book-form-link');
+    $book = getSampleBook();
 
-    clickButton('submitButton');
-
-    assertPageContainsElementWithId('error-block');
-
-    setFieldValue('title', "aa");
+    setTextFieldValue('title', $book->title);
+    setRadioFieldValue('grade', $book->grade);
+    setCheckboxValue('isRead', $book->isRead);
 
     clickButton('submitButton');
 
-    assertPageContainsElementWithId('error-block');
-
-    setFieldValue('title', "aaa");
-
-    clickButton('submitButton');
-
-    // $this->assertNoElementById('error-block');
-
-    // assertThat(page(), not(contains(element(withId('error-block')))));
-
-    assertPageContainsElementWithId('message-block');
+    assertPageContainsText($book->title);
 }
 
-function _onValidationErrorDisplayedBookFormIsFilledWithInsertedData() {
+function submittingAuthorFormAddsAuthorToList() {
 
-    navigateTo('/');
+    navigateTo(BASE_URL);
 
-    clickLinkById('book-form-link');
+    clickLinkWithId('author-form-link');
 
-    setFieldValue('title', "a");
-    setFieldValue('grade', "4");
-    setFieldValue('isRead', true);
+    $author = getSampleAuthor();
+
+    setTextFieldValue('firstName', $author->firstName);
+    setTextFieldValue('lastName', $author->lastName);
+    setRadioFieldValue('grade', $author->grade);
 
     clickButton('submitButton');
 
-    assertFieldValue('title', "a");
-    assertFieldValue('grade', "4");
-    assertFieldValue('isRead', true);
+    assertPageContainsText($author->firstName);
+    assertPageContainsText($author->lastName);
 }
 
+function canHandleDifferentSymbolsInBookTitles() {
+
+    navigateTo(BASE_URL);
+
+    clickLinkWithId('book-form-link');
+
+    $title = "!.,:;\n" . getSampleBook()->title;
+
+    setTextFieldValue('title', $title);
+
+    clickButton('submitButton');
+
+    assertPageContainsText($title);
+}
+
+function canHandleDifferentSymbolsInAuthorNames() {
+
+    navigateTo(BASE_URL);
+
+    clickLinkWithId('author-form-link');
+
+    $firstName = "!.,:;\n" . getSampleAuthor()->firstName;
+    $lastName = "!.,:;\n" . getSampleAuthor()->lastName;
+
+    setTextFieldValue('firstName', $firstName);
+    setTextFieldValue('lastName', $lastName);
+
+    clickButton('submitButton');
+
+    assertPageContainsText($firstName);
+    assertPageContainsText($lastName);
+}
 
 stf\runTests();

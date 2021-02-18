@@ -21,6 +21,10 @@ class TextField extends AbstractInput {
     public function getValue() : string {
         return $this->value;
     }
+
+    public function setValue(string $value): void {
+        $this->value = $value;
+    }
 }
 
 

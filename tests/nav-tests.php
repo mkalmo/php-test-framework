@@ -9,7 +9,7 @@ setBaseUrl(BASE_URL);
 function indexToA() {
     navigateTo('/');
 
-    clickLinkByText("a.html");
+    clickLinkWithText("a.html");
 
     assertCurrentUrl(BASE_URL . "/a/a.html");
 }
@@ -17,7 +17,7 @@ function indexToA() {
 function aToE() {
     navigateTo('/a/a.html');
 
-    clickLinkByText("e.html");
+    clickLinkWithText("e.html");
 
     assertCurrentUrl(BASE_URL . "/a/b/c/d/e/e.html");
 }
@@ -25,7 +25,7 @@ function aToE() {
 function eToD() {
     navigateTo('/a/b/c/d/e/e.html');
 
-    clickLinkByText("d.html");
+    clickLinkWithText("d.html");
 
     assertCurrentUrl(BASE_URL . "/a/b/c/d/d.html");
 }
@@ -33,7 +33,7 @@ function eToD() {
 function dToB() {
     navigateTo('/a/b/c/d/d.html');
 
-    clickLinkByText("b.html");
+    clickLinkWithText("b.html");
 
     assertCurrentUrl(BASE_URL . "/a/b/b.html");
 }
@@ -41,7 +41,7 @@ function dToB() {
 function emptyLink() {
     navigateTo('/a/b/c/d/e/f/f.html');
 
-    clickLinkByText("shortest self");
+    clickLinkWithText("shortest self");
 
     assertCurrentUrl(BASE_URL . "/a/b/c/d/e/f/f.html");
 }
@@ -49,7 +49,7 @@ function emptyLink() {
 function directoryLink() {
     navigateTo('/a/b/c/d/e/f/f.html');
 
-    clickLinkByText("shortest f/index.html");
+    clickLinkWithText("shortest f/index.html");
 
     assertCurrentUrl(BASE_URL . "/a/b/c/d/e/f/");
 }
@@ -57,7 +57,7 @@ function directoryLink() {
 function rootLink() {
     navigateTo('/a/b/c/d/e/f/f.html');
 
-    clickLinkByText("shortest a.html");
+    clickLinkWithText("shortest a.html");
 
     assertCurrentUrl(BASE_URL . "/a/a.html");
 }

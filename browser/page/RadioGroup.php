@@ -18,6 +18,16 @@ class RadioGroup extends AbstractInput {
         $this->values[] = [$value, false];
     }
 
+    public function hasOption(string $value) : bool {
+        foreach ($this->values as &$each) {
+            if ($each[0] === $value) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function selectOption(string $value) {
         foreach ($this->values as &$each) {
             if ($each[0] === $value) {

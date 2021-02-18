@@ -61,7 +61,7 @@ class Browser {
         }
 
         if ($this->settings->logPostParameters && $request->isPostMethod()) {
-            printf("POST parameters: %s" . PHP_EOL,
+            printf("   POST parameters: %s" . PHP_EOL,
                 mapAsString($request->getParameters()));
         }
 

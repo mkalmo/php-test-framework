@@ -1,78 +1,69 @@
 <?php
 
 require_once '../public-api.php';
-require_once '../dsl.php';
 
 const BASE_URL = 'http://localhost:8080';
 
 setBaseUrl(BASE_URL);
-logRequests(false);
 
-function submittingFormAddsPersonToList() {
-    navigateTo('/');
+function bookListPageContainsCorrectMenu() {
+    navigateTo(BASE_URL);
 
-    clickLinkById('book-form-link');
+    assertThat(getPageId(), is('book-list-page'));
 
-    $book = getSampleBook();
-
-    setFieldValue('title', $book->title);
-    setFieldValue('grade', $book->grade);
-    setFieldValue('isRead', $book->isRead);
-
-    clickButton('submitButton');
-
-    assertPageContainsText($book->title);
+    assertPageContainsLinkWithId('book-list-link');
+    assertPageContainsLinkWithId('book-form-link');
+    assertPageContainsLinkWithId('author-list-link');
+    assertPageContainsLinkWithId('author-form-link');
 }
 
-function submittingAuthorFormAddsAuthorToList() {
+function bookFormPageContainsCorrectElements() {
+    navigateTo(BASE_URL);
 
-    navigateTo('/');
+    clickLinkWithId('book-form-link');
 
-    clickLinkById('author-form-link');
+    assertThat(getPageId(), is('book-form-page'));
 
-    $author = getSampleAuthor();
+    assertPageContainsLinkWithId('book-list-link');
+    assertPageContainsLinkWithId('book-form-link');
+    assertPageContainsLinkWithId('author-list-link');
+    assertPageContainsLinkWithId('author-form-link');
 
-    setFieldValue('firstName', $author->firstName);
-    setFieldValue('lastName', $author->lastName);
-    setFieldValue('grade', $author->grade);
-
-    clickButton('submitButton');
-
-    assertPageContainsText($author->firstName);
-    assertPageContainsText($author->lastName);
+    assertPageContainsTextFieldWithName('title');
+    assertPageContainsRadioWithName('grade');
+    assertPageContainsCheckboxWithName('isRead');
+    assertPageContainsButtonWithName('submitButton');
 }
 
-function canHandleDifferentSymbolsInBookTitles() {
+function authorListPageContainsCorrectMenu() {
+    navigateTo(BASE_URL);
 
-    navigateTo('/');
+    clickLinkWithId('author-list-link');
 
-    clickLinkById('book-form-link');
+    assertThat(getPageId(), is('author-list-page'));
 
-    $title = "!.,:;\n" . getSampleBook()->title;
-
-    setFieldValue('title', $title);
-
-    clickButton('submitButton');
-
-    assertPageContainsText($title);
+    assertPageContainsLinkWithId('book-list-link');
+    assertPageContainsLinkWithId('book-form-link');
+    assertPageContainsLinkWithId('author-list-link');
+    assertPageContainsLinkWithId('author-form-link');
 }
 
-function canHandleDifferentSymbolsInAuthorNames() {
+function authorFormPageContainsCorrectElements() {
+    navigateTo(BASE_URL);
 
-    navigateTo('/');
+    clickLinkWithId('author-form-link');
 
-    clickLinkById('author-form-link');
+    assertThat(getPageId(), is('author-form-page'));
 
-    $firstName = "!.,:;\n" . getSampleAuthor()->firstName;
-    $lastName = "!.,:;\n" . getSampleAuthor()->lastName;
+    assertPageContainsLinkWithId('book-list-link');
+    assertPageContainsLinkWithId('book-form-link');
+    assertPageContainsLinkWithId('author-list-link');
+    assertPageContainsLinkWithId('author-form-link');
 
-    setFieldValue('firstName', $firstName);
-    setFieldValue('lastName', $lastName);
-
-    clickButton('submitButton');
-
-    assertPageContainsText($firstName);
-    assertPageContainsText($lastName);
+    assertPageContainsTextFieldWithName('firstName');
+    assertPageContainsTextFieldWithName('lastName');
+    assertPageContainsRadioWithName('grade');
+    assertPageContainsButtonWithName('submitButton');
 }
 
 stf\runTests();

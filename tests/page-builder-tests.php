@@ -35,4 +35,4 @@ function buildForm() {
     assertThat($form->getAction(), is('params.php?a=1'));
 }
 
-stf\runTests(new \stf\PointsReporter([]));
+stf\runTests(new stf\PointsReporter([]));

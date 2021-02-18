@@ -43,6 +43,18 @@ class FormBuilder {
 
                 $value = $element->getAttributeValue('value') ?? '';
                 $radio->addOption($value);
+                if ($element->hasAttribute('checked')) {
+                    $radio->selectOption($value);
+                }
+
+            } else if ($this->isCheckbox($element)) {
+
+                $value = $element->getAttributeValue('value') ?? 'on';
+                $name = $element->getAttributeValue('name') ?? '';
+                $checkbox = new Checkbox($name, $value);
+                $checkbox->check($element->hasAttribute('checked'));
+
+                $form->addField($checkbox);
 
             } else {
                 $name = $element->getAttributeValue('name') ?? '';
@@ -67,6 +79,11 @@ class FormBuilder {
     private function isRadio($element) : bool {
         return ($element->getTagName() === 'input')
                 && $element->getAttributeValue('type') === 'radio';
+    }
+
+    private function isCheckbox($element) : bool {
+        return ($element->getTagName() === 'input')
+                && $element->getAttributeValue('type') === 'checkbox';
     }
 
     private function createButton($element) : Button {
