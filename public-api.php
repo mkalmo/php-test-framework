@@ -3,6 +3,7 @@
 require_once 'runner.php';
 require_once 'util.php';
 require_once 'dsl.php';
+require_once 'internals.php';
 require_once 'constants.php';
 require_once 'browser/Browser.php';
 require_once 'browser/page/Form.php';
@@ -66,16 +67,6 @@ function getResponseCode() : int {
     return getBrowser()->getResponseCode();
 }
 
-function getForm() : stf\Form {
-    $form = getBrowser()->getPage()->getForm();
-
-    if ($form === null) {
-        fail(ERROR_W07, "Current page does not contain form");
-    }
-
-    return $form;
-}
-
 function getCurrentUrl() : string {
     return getBrowser()->getCurrentUrl();
 }
@@ -100,7 +91,7 @@ function assertPageContainsLinkWithId($linkId) : void {
 }
 
 function assertPageContainsInputWithName($name) : void {
-    $field = getForm()->getFieldByName($name);
+    $field = stf\getForm()->getFieldByName($name);
 
     if ($field === null) {
         fail(ERROR_W05,
@@ -110,7 +101,7 @@ function assertPageContainsInputWithName($name) : void {
 }
 
 function assertPageContainsButtonWithName($name) : void {
-    $field = getForm()->getButtonByName($name);
+    $field = stf\getForm()->getButtonByName($name);
 
     if ($field === null) {
         fail(ERROR_W06,
@@ -191,11 +182,20 @@ function clickButton(string $buttonName) {
 }
 
 function setFieldValue(string $fieldName, string $value) {
-    getForm()->setFieldValue($fieldName, $value);
+    $field = stf\getForm()->getFieldByName($fieldName);
+
+    if ($field instanceof stf\RadioGroup) {
+
+        // check has option
+
+        // $field->addOption('aaa');
+    }
+
+//    stf\getForm()->setFieldValue($fieldName, $value);
 }
 
 function assertFieldValue(string $fieldName, string $expected) {
-    $actual = getForm()->getFieldValue($fieldName);
+    $actual = stf\getForm()->getFieldByName($fieldName)->getValue();
 
     if ($actual !== $expected) {
         fail(ERROR_W09, sprintf("Expected value to be '%s' but it was '%s'",

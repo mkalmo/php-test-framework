@@ -11,7 +11,7 @@ require_once __DIR__ . '/../parser/node/TextNode.php';
 require_once __DIR__ . '/../parser/node/MiscNode.php';
 
 require_once 'Form.php';
-require_once 'Input.php';
+require_once 'TextField.php';
 require_once 'Button.php';
 require_once 'Page.php';
 require_once 'Link.php';
@@ -135,8 +135,8 @@ class PageBuilder {
 
         return array_map(function ($linkNode) {
             return new Link($this->getLinkText($linkNode),
-                $linkNode->getAttributeValue('href'),
-                $linkNode->getAttributeValue('id'));
+                $linkNode->getAttributeValue('href') ?? '',
+                $linkNode->getAttributeValue('id') ?? '');
         }, $nodes);
     }
 

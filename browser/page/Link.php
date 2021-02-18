@@ -4,11 +4,11 @@ namespace stf;
 
 class Link {
 
-    private $text;
-    private $href;
-    private $id;
+    private string $text;
+    private string $href;
+    private string $id;
 
-    public function __construct($text, $href, $id) {
+    public function __construct(string $text, string $href, string $id) {
         $this->text = $text;
         $this->href = $href;
         $this->id = $id;
@@ -26,7 +26,7 @@ class Link {
         return $this->id;
     }
 
-    public function __toString() {
+    public function __toString() : string {
         return sprintf('<a href="%s">%s</a>',
             $this->href, $this->text);
     }

@@ -2,6 +2,8 @@
 
 namespace stf;
 
+require_once 'RadioGroup.php';
+
 class Form {
 
     private string $action = '';
@@ -21,14 +23,6 @@ class Form {
         return $this->fields;
     }
 
-    public function setFieldValue(string $fieldName, string $value) : void {
-        $this->getFieldByName($fieldName)->setValue($value);
-    }
-
-    public function getFieldValue(string $fieldName) : string {
-        return $this->getFieldByName($fieldName)->getValue();
-    }
-
     public function getButtonByName($buttonName) : ?Button {
         $buttons = array_filter($this->buttons, function ($button) use ($buttonName) {
             return $button->getName() === $buttonName;
@@ -39,7 +33,11 @@ class Form {
         return $button ?? null;
     }
 
-    public function getFieldByName($fieldName) : ?Input {
+    public function getFieldByName($fieldName) : ?AbstractInput {
+        return $this->getFieldByNameCommon($fieldName);
+    }
+
+    private function getFieldByNameCommon($fieldName) {
         $fields = array_filter($this->fields, function ($field) use ($fieldName) {
             return $field->getName() === $fieldName;
         });
@@ -47,6 +45,10 @@ class Form {
         $field = array_shift($fields);
 
         return $field ?? null;
+    }
+
+    public function getRadioByName($fieldName) : ?RadioGroup {
+        return $this->getFieldByNameCommon($fieldName);
     }
 
     public function getAction() : ?string {
