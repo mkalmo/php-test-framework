@@ -50,7 +50,11 @@ function buildsButtons() {
 
 #Helper
 function getForm(string $html) : stf\Form {
-    return (new stf\PageBuilder($html))->getPage()->getForm();
+    $parser = new stf\PageParser($html);
+
+    $builder = new stf\PageBuilder($html, $parser->getNodeTree());
+
+    return $builder->getPage()->getForm();
 }
 
 stf\runTests();

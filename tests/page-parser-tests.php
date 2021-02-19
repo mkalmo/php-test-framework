@@ -29,4 +29,4 @@ function parserErrors() {
 }
 
 
-stf\runTests(new stf\PointsReporter([]));
+stf\runTests();

@@ -2,6 +2,8 @@
 
 namespace stf;
 
+use http\Exception\RuntimeException;
+
 require_once 'Globals.php';
 require_once 'browser/Url.php';
 require_once 'browser/HttpClient.php';
@@ -9,6 +11,7 @@ require_once 'browser/HttpRequest.php';
 require_once 'browser/HttpResponse.php';
 require_once 'browser/RequestBuilder.php';
 require_once 'browser/page/PageBuilder.php';
+require_once 'browser/page/PageParser.php';
 
 function getForm() : Form {
     $form = getGlobals()->page->getForm();
@@ -70,22 +73,71 @@ function submitFormByButtonPress(string $buttonName) {
 function executeRequest(HttpRequest $request) {
     $g = getGlobals();
 
-    $response = (new HttpClient())->execute($request);
+    $url = $request->getFullUrl()->asString();
+
+    assertValidUrl($url);
+
+    try {
+        $response = (new HttpClient())->execute($request);
+    } catch (\Exception $e) {
+        throw new FrameworkException(ERROR_C04, $e->getTraceAsString());
+    } finally {
+        if ($g->logRequests) {
+            printf("%s (%s)\n", $url, $response->code ?? 'no response code');
+        }
+    }
+
 
     $g->currentUrl = $request->getFullUrl();
 
-    if ($g->logRequests) {
-        printf("%s (%s)" . PHP_EOL,
-            $request->getFullUrl()->asString(), $response->code);
-    }
 
     if ($g->logPostParameters && $request->isPostMethod()) {
         printf("   POST parameters: %s" . PHP_EOL,
             mapAsString($request->getParameters()));
     }
 
-    $page = (new PageBuilder($response->contents))->getPage();
+    $pageParser = new PageParser($response->contents);
+
+    assertValidResponse($response->code);
+    assertValidHtml($pageParser);
+
+    $page = (new PageBuilder($response->contents,
+        $pageParser->getNodeTree()))->getPage();
 
     $g->responseCode = $response->code;
     $g->page = $page;
+}
+
+function assertValidResponse(int $code): void {
+    if ($code >= 400) {
+        fail(ERROR_W19, "Server responded with error: " . $code);
+    }
+}
+
+function assertValidHtml(PageParser $pageParser): void {
+    $result = $pageParser->validate();
+
+    if ($result->isSuccess()) {
+        return;
+    }
+
+    $message = sprintf("Application responded with incorrect HTML\n");
+    $message .= sprintf("%s at line %s, column %s\n\n",
+        $result->getMessage(), $result->getLine(), $result->getColumn());
+    $message .= sprintf("%s\n", $result->getSource());
+
+    fail(ERROR_W02, $message);
+}
+
+function assertValidUrl(string $url) : void {
+    $invalidCharsRegex = "/[^0-9A-Za-z:\/?#\[\]@!$&\'()*+,;=\-._~%]/";
+
+    if (!preg_match($invalidCharsRegex, $url, $matches)) {
+        return;
+    }
+
+    $message = sprintf("Url '%s' contains illegal character: '%s'",
+        $url, $matches[0]);
+
+    fail(ERROR_W20, $message);
 }

@@ -32,11 +32,11 @@ use \RuntimeException;
 class PageBuilder {
 
     private string $html;
-    private $tree;
+    private AbstractNode $tree;
 
-    public function __construct(string $html) {
+    public function __construct(string $html, AbstractNode $tree) {
         $this->html = $html;
-        $this->tree = $this->buildNodeTree($html);
+        $this->tree = $tree;
     }
 
     function getPage() : Page {
@@ -65,37 +65,6 @@ class PageBuilder {
             $forms[0], ['input', 'button']);
 
         return (new FormBuilder($forms[0], $formElements))->buildForm();
-    }
-
-    private function buildNodeTree($html) {
-        try {
-            $tokens = (new HtmlLexer($html))->tokenize();
-
-            $builder = new TreeBuilderActions();
-
-            (new HtmlParser($tokens, $builder))->parse();
-
-        } catch (Exception $e) {
-            throw $this->error($e);
-        }
-
-        return $builder->getResult();
-    }
-
-    private function error($e): RuntimeException {
-        $message = sprintf("Incorrect HTML at %s \n %s\n",
-            $this->locationString($e->pos), $e->message);
-
-        return new FrameworkException(ERROR_W02, $message);
-    }
-
-    private function locationString($pos): string {
-        $textParsed = substr($this->html, 0, $pos);
-        $lines = explode("\n", $textParsed);
-        $lineNr = count($lines);
-        $colNr = strlen($lines[$lineNr - 1]) + 1; // +1: starts from 1
-
-        return sprintf('line %s, column %s', $lineNr, $colNr);
     }
 
     private function findNodesByTagNames($node, $names) : array {

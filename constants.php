@@ -3,6 +3,7 @@
 const ERROR_C01 = 'C01'; // message should be enough
 const ERROR_C02 = 'C02'; // not equal
 const ERROR_C03 = 'C03'; // string does not contain substring
+const ERROR_C04 = 'C04'; // unexpected
 
 const ERROR_W01 = 'W01'; // Error reading socket [Cannot open [localhost:8080] with [Connection refused] within [15] seconds]
 const ERROR_W02 = 'W02'; // Parse exception
@@ -23,3 +24,6 @@ const ERROR_W15 = 'W15'; // no checkbox with name
 const ERROR_W16 = 'W16'; // no select with name
 const ERROR_W17 = 'W17'; // element should not exist
 const ERROR_W18 = 'W18'; // field should not exist
+const ERROR_W19 = 'W19'; // bad response code
+const ERROR_W20 = 'W20'; // bad characters in url
+

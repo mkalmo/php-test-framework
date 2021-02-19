@@ -58,7 +58,7 @@ class PageParser {
         $lineNr = count($lines);
         $colNr = strlen($lines[$lineNr - 1]) + 1; // +1: starts from 1
 
-        $start = min(0, $lineNr - 3);
+        $start = max(0, $lineNr - 3);
         $end = $lineNr - 1;
 
         $source = '';

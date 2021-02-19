@@ -210,10 +210,6 @@ function clickLinkWithId($linkId) : void {
 
 function navigateTo(string $url) {
     stf\navigateTo($url);
-
-    // $html = stf\getBrowser()->navigateTo($url);
-    // stf\getBrowser()->updatePage($html);
-
 }
 
 function clickButton(string $buttonName) {
