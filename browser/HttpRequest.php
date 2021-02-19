@@ -2,7 +2,7 @@
 
 namespace stf;
 
-class Request {
+class HttpRequest {
 
     private Url $baseUrl;
     private string $subPath;

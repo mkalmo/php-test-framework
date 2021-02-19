@@ -21,18 +21,4 @@ function buildPage() {
     assertThat($page->getId(), is('form-page-id'));
 }
 
-function buildForm() {
-
-    $html = file_get_contents('../test-files/form.html');
-
-    $page = (new stf\PageBuilder($html))->getPage();
-
-    assertThat($page->containsForm(), is(true));
-
-    $form = $page->getForm();
-
-    assertThat($form->getMethod(), is('post'));
-    assertThat($form->getAction(), is('params.php?a=1'));
-}
-
-stf\runTests(new stf\PointsReporter([]));
+stf\runTests();

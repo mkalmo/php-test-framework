@@ -4,7 +4,7 @@ const MAX_POINTS = 5;
 const RESULT_PATTERN = "\nRESULT: %s of %s POINTS\n";
 
 function getPageId() : ?string {
-    return stf\getBrowser()->getPage()->getId();
+    return stf\getGlobals()->page->getId();
 }
 
 class Author {

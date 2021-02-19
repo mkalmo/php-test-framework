@@ -1,7 +1,6 @@
 <?php
 
 require_once '../public-api.php';
-require_once '../dsl.php';
 
 const BASE_URL = 'http://localhost:8080';
 

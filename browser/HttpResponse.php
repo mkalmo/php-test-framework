@@ -2,7 +2,7 @@
 
 namespace stf;
 
-class Response {
+class HttpResponse {
 
     public int $code;
     public string $contents;

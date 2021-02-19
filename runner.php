@@ -53,6 +53,8 @@ function runTests(?PointsReporter $reporter = null) {
 function getStackTrace(Exception $ex, string $testName) : string {
     $result = '';
 
+    // print $ex;
+
     foreach ($ex->getTrace() as $line) {
         $functionName = $line['function'] ?? '';
         $lineNr = $line['line'] ?? '';

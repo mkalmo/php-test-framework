@@ -2,13 +2,11 @@
 
 require_once 'runner.php';
 require_once 'util.php';
-require_once 'dsl.php';
+require_once 'domain.php';
 require_once 'internals.php';
 require_once 'constants.php';
-require_once 'browser/Browser.php';
 require_once 'browser/page/Form.php';
 include_once 'PointsReporter.php';
-require_once 'Settings.php';
 
 require_once 'matchers/ContainsMatcher.php';
 require_once 'matchers/ContainsNotMatcher.php';
@@ -28,7 +26,7 @@ function fail($code, $message): void {
     throw new stf\FrameworkException($code, $message);
 }
 
-function assertThat($actual, stf\AbstractMatcher $matcher, $error = ''): void {
+function assertThat($actual, stf\AbstractMatcher $matcher): void {
     if ($matcher->matches($actual)) {
         return;
     }
@@ -43,28 +41,27 @@ function is($value) : stf\AbstractMatcher {
 }
 
 function setBaseUrl(string $url) : void {
-    stf\getBrowser()->setCurrentUrl($url);
+    stf\getGlobals()->currentUrl = new stf\Url($url);
 }
 
 function logRequests(bool $flag) : void {
-    stf\getSettings()->logRequests = $flag;
+    stf\getGlobals()->logRequests = $flag;
 }
 
 function logPostParameters(bool $flag) : void {
-    stf\getSettings()->logPostParameters = $flag;
+    stf\getGlobals()->logPostParameters = $flag;
 }
 
 function getResponseCode() : int {
-    return stf\getBrowser()->getResponseCode();
+    return stf\getGlobals()->responseCode;
 }
 
 function getCurrentUrl() : string {
-    return stf\getBrowser()->getCurrentUrl();
+    return stf\getGlobals()->currentUrl->asString();
 }
 
 function printPageSource() : void {
-    $page = stf\getBrowser()->getPage();
-    print $page->getSource() . PHP_EOL;
+    print stf\getGlobals()->page->getSource() . PHP_EOL;
 }
 
 function printPageText() : void {
@@ -72,11 +69,11 @@ function printPageText() : void {
 }
 
 function getPageText() : string {
-    return stf\getBrowser()->getPage()->getText();
+    return stf\getGlobals()->page->getText();
 }
 
 function assertPageContainsLinkWithId($linkId) : void {
-    $link = stf\getBrowser()->getPage()->getLinkById($linkId);
+    $link = stf\getGlobals()->page->getLinkById($linkId);
 
     if ($link === null) {
         fail(ERROR_W03,
@@ -140,7 +137,7 @@ function assertPageContainsButtonWithName($name) : void {
 }
 
 function assertPageContainsLinkWithText($text) : void {
-    $link = stf\getBrowser()->getPage()->getLinkByText($text);
+    $link = stf\getGlobals()->page->getLinkByText($text);
 
     if ($link === null) {
         fail(ERROR_W03,
@@ -171,7 +168,7 @@ function assertPageDoesNotContainElementWithId($id) : void {
 }
 
 function assertPageContainsText($textToBeFound) : void {
-    $pageText = stf\getBrowser()->getPage()->getText();
+    $pageText = stf\getGlobals()->page->getText();
 
     if (strpos($pageText, $textToBeFound) !== false) {
         return;
@@ -181,10 +178,10 @@ function assertPageContainsText($textToBeFound) : void {
 }
 
 function assertCurrentUrl($expected) : void {
-    $actual = stf\getBrowser()->getCurrentUrl();
+    $actual = stf\getGlobals()->currentUrl->asString();
 
     if ($actual !== $expected) {
-        fail(ERROR_W10, sprintf("Expected url to be %s but was %s",
+        fail(ERROR_W10, sprintf("Expected url to be '%s' but was '%s'",
             $expected, $actual));
     }
 }
@@ -192,31 +189,35 @@ function assertCurrentUrl($expected) : void {
 function clickLinkWithText($text) : void {
     assertPageContainsLinkWithText($text);
 
-    $link = stf\getBrowser()->getPage()->getLinkByText($text);
+    $link = stf\getGlobals()->page->getLinkByText($text);
 
-    stf\getBrowser()->navigateTo($link->getHref());
+    stf\navigateTo($link->getHref());
 }
 
 function getHrefFromLinkWithText($text) : string {
     assertPageContainsLinkWithText($text);
 
-    return stf\getBrowser()->getPage()->getLinkByText($text)->getHref();
+    return stf\getGlobals()->page->getLinkByText($text)->getHref();
 }
 
 function clickLinkWithId($linkId) : void {
     assertPageContainsLinkWithId($linkId);
 
-    $link = stf\getBrowser()->getPage()->getLinkById($linkId);
+    $link = stf\getGlobals()->page->getLinkById($linkId);
 
     navigateTo($link->getHref());
 }
 
 function navigateTo(string $url) {
-    stf\getBrowser()->navigateTo($url);
+    stf\navigateTo($url);
+
+    // $html = stf\getBrowser()->navigateTo($url);
+    // stf\getBrowser()->updatePage($html);
+
 }
 
 function clickButton(string $buttonName) {
-    stf\getBrowser()->submitFormByButtonPress($buttonName);
+    stf\submitFormByButtonPress($buttonName);
 }
 
 function setTextFieldValue(string $fieldName, string $value) {

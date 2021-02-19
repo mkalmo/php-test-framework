@@ -4,7 +4,7 @@ namespace stf;
 
 use \RuntimeException;
 
-require_once 'Request.php';
+require_once 'HttpRequest.php';
 
 class RequestBuilder {
 
@@ -16,7 +16,7 @@ class RequestBuilder {
         $this->currentUrl = $currentUrl;
     }
 
-    public function requestFromButtonPress(string $buttonName) : Request {
+    public function requestFromButtonPress(string $buttonName) : HttpRequest {
         $button = $this->form->getButtonByName($buttonName);
 
         if ($button === null) {
@@ -25,7 +25,7 @@ class RequestBuilder {
 
         $action = $button->getFormAction() ?: $this->form->getAction();
 
-        $request = new Request($this->currentUrl, $action, $this->form->getMethod());
+        $request = new HttpRequest($this->currentUrl, $action, $this->form->getMethod());
 
         $request->addParameter($button->getName(), $button->getValue());
 

@@ -5,17 +5,17 @@ namespace stf;
 include_once __DIR__ . '/../simpletest/user_agent.php';
 include_once __DIR__ . '/../FrameworkException.php';
 
-include_once 'Response.php';
+include_once 'HttpResponse.php';
+include_once 'HttpRequest.php';
 
 use \SimpleUserAgent;
 use \SimpleGetEncoding;
 use \SimplePostEncoding;
 use \SimpleUrl;
-use \RuntimeException;
 
 class HttpClient {
 
-    function execute(Request $request) : Response {
+    function execute(HttpRequest $request) : HttpResponse {
 
         $url = $request->getFullUrl()->asString();
 
@@ -36,7 +36,7 @@ class HttpClient {
                 $response->getError());
         }
 
-        return new Response($headers->getResponseCode(), $response->getContent());
+        return new HttpResponse($headers->getResponseCode(), $response->getContent());
     }
 
 }
