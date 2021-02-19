@@ -23,6 +23,10 @@ class Button extends AbstractInput {
     public function getValue(): string {
         return $this->value;
     }
+
+    public function getFormAction(): string {
+        return $this->formAction;
+    }
 }
 
 

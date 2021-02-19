@@ -23,8 +23,9 @@ class RequestBuilder {
             throw new RuntimeException('no such button: ' . $buttonName);
         }
 
-        $request = new Request($this->currentUrl,
-            $this->form->getAction(), $this->form->getMethod());
+        $action = $button->getFormAction() ?: $this->form->getAction();
+
+        $request = new Request($this->currentUrl, $action, $this->form->getMethod());
 
         $request->addParameter($button->getName(), $button->getValue());
 

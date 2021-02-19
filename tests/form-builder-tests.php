@@ -27,6 +27,27 @@ function buildsCheckboxes() {
     assertThat($c2->getValue(), is('v2'));
 }
 
+function buildsButtons() {
+    $html = '<form action="?cmd=0">
+                   <input type="submit" name="b1" 
+                          value="Button 1" 
+                          formaction="?cmd=1" />
+                   <button type="submit" name="b2" 
+                           formaction="?cmd=2">Button 2</button></form>';
+
+    $b1 = getForm($html)->getButtonByName('b1');
+
+    assertThat($b1->getName(), is('b1'));
+    assertThat($b1->getValue(), is('Button 1'));
+    assertThat($b1->getFormAction(), is('?cmd=1'));
+
+    $b2 = getForm($html)->getButtonByName('b2');
+    assertThat($b2->getName(), is('b2'));
+    assertThat($b2->getValue(), is(''));
+    assertThat($b2->getFormAction(), is('?cmd=2'));
+
+}
+
 #Helper
 function getForm(string $html) : stf\Form {
     return (new stf\PageBuilder($html))->getPage()->getForm();
