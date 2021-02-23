@@ -7,9 +7,6 @@ require_once 'node/TagNode.php';
 require_once 'node/TextNode.php';
 require_once 'node/MiscNode.php';
 require_once 'node/WsNode.php';
-require_once 'node/IfNode.php';
-require_once 'node/ForNode.php';
-require_once 'node/IncludeNode.php';
 
 class TreeBuilderActions {
 
@@ -37,16 +34,8 @@ class TreeBuilderActions {
         $this->stack[] = $node;
     }
 
-    private function createTag($tagName, $attributes) {
-        if (isset($attributes['tpl-if'])) {
-            return new IfNode($tagName, $attributes);
-        } else if (isset($attributes['tpl-foreach'])) {
-            return new ForNode($tagName, $attributes);
-        } else if (isset($attributes['tpl-include'])) {
-            return new IncludeNode($tagName, $attributes);
-        } else {
-            return new TagNode($tagName, $attributes);
-        }
+    private function createTag($tagName, $attributes) : TagNode {
+        return new TagNode($tagName, $attributes);
     }
 
     public function tagEndAction($tagName) {
