@@ -126,3 +126,44 @@ function getFunctionNames(string $src): array {
 
     return $result;
 }
+
+function runAllTestsInDirectory($directory, $suiteFile) {
+    $files = scandir($directory);
+
+    $testCount = 0;
+    $passedCount = 0;
+    foreach ($files as $file) {
+        if (!is_file($file)) {
+            continue;
+        } else if (strpos($suiteFile, $file) !== false) {
+            continue;
+        }
+
+        $cmd = sprintf('php %s', $file);
+
+        $output = [];
+
+        exec($cmd, $output);
+
+        $outputString = implode("\n", $output);
+
+        $allPassed = didAllTestsPass($outputString);
+
+        $result =  $allPassed ? ' OK' : " NOK";
+
+        $testCount++;
+        if ($allPassed) {
+            $passedCount++;
+        }
+
+        printf("%s%s\n", $file, $result);
+    }
+
+    printf("\n%s of %s tests passed.\n", $passedCount, $testCount);
+}
+
+function didAllTestsPass(string $output) : bool {
+    preg_match("/(\d+) of (\d+) tests passed./", $output, $matches);
+
+    return count($matches) && $matches[1] == $matches[2];
+}
