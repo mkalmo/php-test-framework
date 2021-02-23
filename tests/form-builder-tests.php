@@ -48,7 +48,8 @@ function buildsButtons() {
 
 }
 
-#Helper
+#Helpers
+
 function getForm(string $html) : stf\Form {
     $parser = new stf\PageParser($html);
 

@@ -9,7 +9,8 @@ require_once 'browser/page/Form.php';
 include_once 'PointsReporter.php';
 
 require_once 'matchers/ContainsMatcher.php';
-require_once 'matchers/ContainsNotMatcher.php';
+require_once 'matchers/ContainsStringMatcher.php';
+require_once 'matchers/ContainsNotStringMatcher.php';
 require_once 'matchers/IsMatcher.php';
 
 function assertThrows($function): void {
@@ -266,9 +267,13 @@ function assertFieldValue(string $fieldName, string $expected) {
 }
 
 function containsString(string $needle) : stf\AbstractMatcher {
-    return new stf\ContainsMatcher($needle);
+    return new stf\ContainsStringMatcher($needle);
+}
+
+function contains(array $needleArray) : stf\AbstractMatcher {
+    return new stf\ContainsMatcher($needleArray);
 }
 
 function doesNotContainString(string $needle) : stf\AbstractMatcher {
-    return new stf\ContainsNotMatcher($needle);
+    return new stf\ContainsNotStringMatcher($needle);
 }

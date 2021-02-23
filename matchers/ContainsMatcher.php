@@ -2,26 +2,55 @@
 
 namespace stf;
 
+use \RuntimeException;
+
 require_once 'AbstractMatcher.php';
 require_once 'MatcherError.php';
 
 class ContainsMatcher extends AbstractMatcher {
 
-    private string $needle;
+    private array $expected;
 
-    public function __construct(string $needle) {
-        $this->needle = $needle;
+    public function __construct(array $expected) {
+        $this->expected = $expected;
     }
 
     public function matches($actual) : bool {
-        return strpos($actual, $this->needle) !== false;
+        if (count($actual) !== count($this->expected)) {
+            return false;
+        }
+
+        for ($i = 0; $i < count($actual); $i++) {
+            if ($actual[$i] !== $this->expected[$i]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public function getError(
         $actual, ?string $message = null) : MatcherError {
 
-        return new MatcherError(ERROR_C03,
-            sprintf('Does not contain string: %s', $this->needle));
+        if (count($actual) !== count($this->expected)) {
+            return new MatcherError(ERROR_C02,
+                "Arrays are of different length");
+        }
+
+        for ($i = 0; $i < count($actual); $i++) {
+            $actualElement = $actual[$i];
+            $expectedElement = $this->expected[$i];
+
+            if ($actualElement !== $expectedElement) {
+                $message = sprintf(
+                    "Different values in position %s. Expected: %s. Actual: %s",
+                    $i, asString($expectedElement), asString($actualElement));
+
+                return new MatcherError(ERROR_C02, $message);
+            }
+        }
+
+        throw new RuntimeException('Programming error');
     }
 }
 

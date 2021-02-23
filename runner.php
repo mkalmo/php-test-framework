@@ -4,7 +4,7 @@ namespace stf;
 
 require_once 'browser/parser/ParseException.php';
 
-use Exception;
+use \Exception;
 use \RuntimeException;
 use tplLib\ParseException;
 
@@ -71,29 +71,12 @@ function getStackTrace(Exception $ex, string $testName) : string {
     return $result;
 }
 
-
 function getTestNames() : array {
     $testFilePath = get_included_files()[0];
 
-    $contents = file_get_contents($testFilePath);
+    $testFileSource = file_get_contents($testFilePath);
 
-    $contents = preg_replace('/\s+/', ' ', $contents);
-    preg_match_all('/(#Helper)? function \w+ ?\(/', $contents, $matches);
-
-    if (!isset($matches[0])) {
-        return [];
-    }
-
-    $testNames = [];
-    foreach ($matches[0] as $match) {
-        if (stripos($match, '#Helper') !== false) {
-            continue;
-        }
-
-        preg_match('/function (\w+)/', $match, $nameMatch);
-
-        $testNames[] = $nameMatch[1];
-    }
+    $testNames = getFunctionNames($testFileSource);
 
     if (containsSelectedTests($testNames)) {
         $testNames = array_filter($testNames, function($name) {
@@ -115,4 +98,37 @@ function containsSelectedTests($testNames) : bool {
 
 function startsWith($subject, $match) : bool {
     return stripos($subject, $match) === 0;
+}
+
+function getFunctionNames(string $src): array {
+
+    $tokens = token_get_all($src);
+
+    $result = [];
+    while (count($tokens)) {
+        $token = array_shift($tokens);
+
+        if (is_array($token)
+            && token_name($token[0]) === 'T_COMMENT'
+            && strpos($token[1], '#Helpers') !== false) {
+
+            return $result;
+        }
+
+        if (is_array($token) && token_name($token[0]) === 'T_FUNCTION') {
+            $token = array_shift($tokens);
+            if (is_array($token) && token_name($token[0]) === 'T_WHITESPACE') {
+                $token = array_shift($tokens);
+            }
+            if ($token === '(') { // anonymous function
+                continue;
+            } else if (is_array($token) && token_name($token[0]) === 'T_STRING') {
+                $result[] = $token[1];
+            } else {
+                throw new RuntimeException('Unexpected error');
+            }
+        }
+    }
+
+    return $result;
 }

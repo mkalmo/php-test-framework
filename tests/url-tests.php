@@ -48,7 +48,8 @@ function fromDir() {
     assertThat(url('http://lh/a/')->navigateTo('b')->asString(), is('http://lh/a/b'));
 }
 
-#Helper
+#Helpers
+
 function url(?string $url) : stf\Url {
     return new stf\Url($url);
 }

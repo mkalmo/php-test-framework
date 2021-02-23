@@ -28,9 +28,13 @@ function getSampleAuthor() : Author {
     return $author;
 }
 
+function getRandomString(int $length) : string {
+    return substr(md5(mt_rand()), 0, $length);
+}
+
 function getSampleBook() : Book {
     $book = new Book();
-    $randomValue = substr(md5(mt_rand()), 0, 9);
+    $randomValue = getRandomString(10);
     $book->title = $randomValue . '0';
     $book->grade = 5;
     $book->isRead = true;

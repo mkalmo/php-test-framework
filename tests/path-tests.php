@@ -66,7 +66,8 @@ function normalize() {
 
 }
 
-#Helper
+#Helpers
+
 function path(?string $path) : Path {
     return new Path($path);
 }

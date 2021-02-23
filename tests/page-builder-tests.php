@@ -21,7 +21,8 @@ function buildPage() {
     assertThat($page->getId(), is('form-page-id'));
 }
 
-#Helper
+#Helpers
+
 function getPage(string $html) : stf\Page {
     $parser = new stf\PageParser($html);
 
