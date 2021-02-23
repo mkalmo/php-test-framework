@@ -48,6 +48,15 @@ function buildsButtons() {
 
 }
 
+function buildsTextArea() {
+    $html = '<form><textarea name="a1"> Hello </textarea></form>';
+
+    $field = getForm($html)->getTextFieldByName('a1');
+
+    assertThat($field->getName(), is('a1'));
+    assertThat($field->getValue(), is(' Hello '));
+}
+
 #Helpers
 
 function getForm(string $html) : stf\Form {

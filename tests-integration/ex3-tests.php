@@ -3,7 +3,7 @@
 require_once '../public-api.php';
 
 const PROJECT_DIRECTORY = '/home/mkalmo/git/php/icd0007exphp';
-
+const BASE_URL = 'http://localhost:8080';
 
 function canSavePosts() {
 
@@ -19,9 +19,36 @@ function canSavePosts() {
     assertContains(getAllPosts(), $post);
 }
 
-setIncludePath();
+function canSavePostsContainingDifferentSymbols() {
+
+    require_once 'ex8.php';
+
+    $title = getRandomString(5);
+    $text = getRandomString(10) . ".'\n;";
+
+    $post = new Post($title, $text);
+
+    savePost($post);
+
+    assertContains(getAllPosts(), $post);
+}
+
+function _canSendSimpleTextToDifferentReceiver() {
+    navigateTo(BASE_URL . '/sender.html');
+
+    setTextFieldValue('text', 'hello');
+
+    clickButton('sendButton');
+
+    printPageSource();
+}
+
 
 #Helpers
+
+setBaseUrl(BASE_URL);
+
+setIncludePath();
 
 function assertContains(array $allPosts, Post $post) {
     foreach ($allPosts as $each) {

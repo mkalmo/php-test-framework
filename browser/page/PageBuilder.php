@@ -19,14 +19,8 @@ require_once 'Element.php';
 
 require_once 'FormBuilder.php';
 
-use Exception;
-use tplLib\HtmlLexer;
-use tplLib\HtmlParser;
 use tplLib\TagNode;
-use tplLib\TextNode;
-use tplLib\WsNode;
 use tplLib\AbstractNode;
-use tplLib\TreeBuilderActions;
 use \RuntimeException;
 
 class PageBuilder {
@@ -62,7 +56,7 @@ class PageBuilder {
         }
 
         $formElements = $this->findNodesByTagNames(
-            $forms[0], ['input', 'button']);
+            $forms[0], ['input', 'button', 'textarea']);
 
         return (new FormBuilder($forms[0], $formElements))->buildForm();
     }
@@ -110,27 +104,11 @@ class PageBuilder {
     }
 
     private function getLinkText($linkNode) : string {
-        return join("", $this->getTextLines($linkNode, true));
+        return join("", PageParser::getTextLines($linkNode, true));
     }
 
     private function getText($node) : string {
-        return join("\n", $this->getTextLines($node));
-    }
-
-    private function getTextLines($node, $withWhiteSpace = false) : array {
-        if ($node instanceof TextNode) {
-            return [$node->getText()];
-        } else if ($withWhiteSpace && $node instanceof WsNode) {
-            return [$node->getText()];
-        }
-
-        $childTexts = [];
-        foreach ($node->getChildren() as $child) {
-            $childTextLines = $this->getTextLines($child, $withWhiteSpace);
-            $childTexts = [...$childTexts, ...$childTextLines];
-        }
-
-        return array_filter($childTexts);
+        return join("\n", PageParser::getTextLines($node));
     }
 }
 

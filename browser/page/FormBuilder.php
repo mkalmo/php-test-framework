@@ -56,6 +56,12 @@ class FormBuilder {
 
                 $form->addField($checkbox);
 
+            } else if ($this->isTextArea($element)) {
+                $name = $element->getAttributeValue('name') ?? '';
+                $value = join("", PageParser::getTextLines($element, true));
+
+                $form->addField(new TextField($name, $value));
+
             } else {
                 $name = $element->getAttributeValue('name') ?? '';
                 $value = $element->getAttributeValue('value') ?? '';
@@ -74,6 +80,10 @@ class FormBuilder {
     private function isButton($element) : bool {
         return ($element->getTagName() === 'button' || $element->getTagName() === 'input')
                 && $element->getAttributeValue('type') === 'submit';
+    }
+
+    private function isTextArea($element) : bool {
+        return $element->getTagName() === 'textarea';
     }
 
     private function isRadio($element) : bool {

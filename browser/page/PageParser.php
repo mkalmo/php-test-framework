@@ -14,7 +14,9 @@ use tplLib\HtmlLexer;
 use tplLib\HtmlParser;
 use tplLib\ParseException;
 use tplLib\AbstractNode;
+use tplLib\TextNode;
 use tplLib\TreeBuilderActions;
+use tplLib\WsNode;
 
 class PageParser {
 
@@ -72,6 +74,20 @@ class PageParser {
         return ValidationResult::failure($ex->message, $lineNr, $colNr, $source);
     }
 
+    public static function getTextLines($node, $withWhiteSpace = false) : array {
+        if ($node instanceof TextNode) {
+            return [$node->getText()];
+        } else if ($withWhiteSpace && $node instanceof WsNode) {
+            return [$node->getText()];
+        }
+
+        $childTexts = [];
+        foreach ($node->getChildren() as $child) {
+            $childTextLines = self::getTextLines($child, $withWhiteSpace);
+            $childTexts = [...$childTexts, ...$childTextLines];
+        }
+
+        return array_filter($childTexts);
+    }
+
 }
-
-
