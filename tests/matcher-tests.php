@@ -2,15 +2,15 @@
 
 require_once '../public-api.php';
 
-//function containsMatcher() {
-//    $text = 'abc 123 dcf';
-//
-//    assertThat($text, containsString('123'));
-//
-//    assertThrows(function () use ($text) {
-//        assertThat($text, containsString('123a'));
-//    });
-//}
+function containsMatcher() {
+    $text = 'abc 123 dcf';
+
+    assertThat($text, containsString('123'));
+
+    assertThrows(function () use ($text) {
+        assertThat($text, containsString('123a'));
+    });
+}
 
 function doesNotContainStringMather() {
     $text = 'abc 123 dcf';
@@ -22,14 +22,14 @@ function doesNotContainStringMather() {
     });
 }
 
-//function isMatcher() {
-//    $text = 'abc';
-//
-//    assertThat($text, is('abc'));
-//
-//    assertThrows(function () use ($text) {
-//        assertThat($text, is('ab'));
-//    });
-//}
+function isMatcher() {
+    $text = 'abc';
+
+    assertThat($text, is('abc'));
+
+    assertThrows(function () use ($text) {
+        assertThat($text, is('ab'));
+    });
+}
 
 stf\runTests();

@@ -27,9 +27,13 @@ function fail($code, $message): void {
     throw new stf\FrameworkException($code, $message);
 }
 
-function assertThat($actual, stf\AbstractMatcher $matcher): void {
+function assertThat($actual, stf\AbstractMatcher $matcher, $message = null): void {
     if ($matcher->matches($actual)) {
         return;
+    }
+
+    if ($message) {
+        throw new stf\FrameworkException(ERROR_C01, $message);
     }
 
     $error = $matcher->getError($actual);
