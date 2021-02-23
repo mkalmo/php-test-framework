@@ -175,7 +175,7 @@ function assertPageContainsText($textToBeFound) : void {
         return;
     }
 
-    fail(ERROR_W21, sprintf("Did not find text '%s' on current page.",
+    fail(ERROR_H04, sprintf("Did not find text '%s' on current page.",
         $textToBeFound));
 }
 
@@ -183,7 +183,7 @@ function assertCurrentUrl($expected) : void {
     $actual = stf\getGlobals()->currentUrl->asString();
 
     if ($actual !== $expected) {
-        fail(ERROR_W10, sprintf("Expected url to be '%s' but was '%s'",
+        fail(ERROR_H03, sprintf("Expected url to be '%s' but was '%s'",
             $expected, $actual));
     }
 }

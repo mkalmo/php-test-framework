@@ -4,7 +4,6 @@ namespace stf;
 
 require_once 'browser/parser/ParseException.php';
 
-use \Exception;
 use \RuntimeException;
 use tplLib\ParseException;
 
@@ -27,7 +26,7 @@ function runTests(?PointsReporter $reporter = null) {
             printf("%s() OK\n", $testName);
 
         } catch (ParseException $ex) {
-            printf("### ERROR: %s ####\n", ERROR_W02);
+            printf("### ERROR: %s ####\n", ERROR_H01);
             printf("Found incorrect HTML \n");
             printf("%s \n", $ex->getMessage());
             printf("Position %s \n", $ex->pos);
@@ -55,7 +54,7 @@ function getCallerLineAndFile(FrameworkException $ex, string $testName) : array 
     $trace = $ex->getTrace();
 
     for ($i = 0; $i < count($trace); $i++) {
-        if (!isset($trace[$i]['file'])) {
+        if (!isset($trace[$i]['file']) && $trace[$i]['function'] === $testName) {
             $callerFile = $trace[$i - 1]['file'];
             $callerLine = $trace[$i - 1]['line'];
 

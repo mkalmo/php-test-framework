@@ -1,6 +1,6 @@
 <?php
 
-const ERROR_E01 = 'E01'; // unexpected
+const ERROR_G01 = 'G01'; // unexpected
 
 const ERROR_C01 = 'C01'; // message should be enough
 const ERROR_C02 = 'C02'; // not equal
@@ -9,11 +9,11 @@ const ERROR_C03 = 'C03'; // string does not contain substring
 const ERROR_N01 = 'N01'; // Error reading socket
 const ERROR_N02 = 'N02'; // bad response code
 
-const ERROR_W02 = 'W02'; // Parse exception
-const ERROR_W20 = 'W20'; // bad characters in url
-const ERROR_W10 = 'W10'; // unexpected current url
-const ERROR_W21 = 'W21'; // no text on the page text
-const ERROR_W22 = 'W22'; // no text in the page source
+const ERROR_H01 = 'H01'; // Parse exception
+const ERROR_H02 = 'H02'; // bad characters in url
+const ERROR_H03 = 'H03'; // unexpected current url
+const ERROR_H04 = 'H04'; // no text on the page text
+const ERROR_H05 = 'H05'; // no text in the page source
 
 const ERROR_W03 = 'W03'; // no link with id
 const ERROR_W04 = 'W04'; // no link with text

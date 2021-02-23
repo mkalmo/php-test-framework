@@ -82,7 +82,7 @@ function executeRequest(HttpRequest $request) {
     } catch (FrameworkException $e) {
         throw $e;
     } catch (Exception $e) {
-        throw new FrameworkException(ERROR_E01, $e->getMessage());
+        throw new FrameworkException(ERROR_G01, $e->getMessage());
     } finally {
         if ($g->logRequests) {
             printf("%s (%s)\n", $url, $response->code ?? 'no response code');
@@ -128,7 +128,7 @@ function assertValidHtml(PageParser $pageParser): void {
         $result->getMessage(), $result->getLine(), $result->getColumn());
     $message .= sprintf("%s\n", $result->getSource());
 
-    fail(ERROR_W02, $message);
+    fail(ERROR_H01, $message);
 }
 
 function assertValidUrl(string $url) : void {
@@ -141,5 +141,5 @@ function assertValidUrl(string $url) : void {
     $message = sprintf("Url '%s' contains illegal character: '%s'",
         $url, $matches[0]);
 
-    fail(ERROR_W20, $message);
+    fail(ERROR_H02, $message);
 }
