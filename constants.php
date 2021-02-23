@@ -26,4 +26,6 @@ const ERROR_W17 = 'W17'; // element should not exist
 const ERROR_W18 = 'W18'; // field should not exist
 const ERROR_W19 = 'W19'; // bad response code
 const ERROR_W20 = 'W20'; // bad characters in url
+const ERROR_W21 = 'W21'; // no text on page text
+const ERROR_W22 = 'W22'; // no text on page source
 

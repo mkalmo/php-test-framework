@@ -175,7 +175,8 @@ function assertPageContainsText($textToBeFound) : void {
         return;
     }
 
-    fail(ERROR_C01, sprintf("Did not find text %s on current page", $textToBeFound));
+    fail(ERROR_W21, sprintf("Did not find text '%s' on current page.",
+        $textToBeFound));
 }
 
 function assertCurrentUrl($expected) : void {

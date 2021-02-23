@@ -2,8 +2,6 @@
 
 namespace stf;
 
-use \RuntimeException;
-
 require_once 'HttpRequest.php';
 
 class RequestBuilder {
@@ -20,7 +18,9 @@ class RequestBuilder {
         $button = $this->form->getButtonByName($buttonName);
 
         if ($button === null) {
-            throw new RuntimeException('no such button: ' . $buttonName);
+            throw new FrameworkException(
+                ERROR_W06,
+                sprintf("Form does not contain button with name '%s'.", $buttonName));
         }
 
         $action = $button->getFormAction() ?: $this->form->getAction();

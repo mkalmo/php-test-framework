@@ -2,7 +2,7 @@
 
 namespace stf;
 
-use http\Exception\RuntimeException;
+use Exception;
 
 require_once 'Globals.php';
 require_once 'browser/Url.php';
@@ -79,8 +79,10 @@ function executeRequest(HttpRequest $request) {
 
     try {
         $response = (new HttpClient())->execute($request);
-    } catch (\Exception $e) {
-        throw new FrameworkException(ERROR_C04, $e->getTraceAsString());
+    } catch (FrameworkException $e) {
+        throw $e;
+    } catch (Exception $e) {
+        throw new FrameworkException(ERROR_C04, $e->getMessage());
     } finally {
         if ($g->logRequests) {
             printf("%s (%s)\n", $url, $response->code ?? 'no response code');
@@ -110,7 +112,7 @@ function executeRequest(HttpRequest $request) {
 
 function assertValidResponse(int $code): void {
     if ($code >= 400) {
-        fail(ERROR_W19, "Server responded with error: " . $code);
+        fail(ERROR_W19, "Server responded with error " . $code);
     }
 }
 
