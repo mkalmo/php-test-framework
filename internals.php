@@ -82,7 +82,7 @@ function executeRequest(HttpRequest $request) {
     } catch (FrameworkException $e) {
         throw $e;
     } catch (Exception $e) {
-        throw new FrameworkException(ERROR_C04, $e->getMessage());
+        throw new FrameworkException(ERROR_E01, $e->getMessage());
     } finally {
         if ($g->logRequests) {
             printf("%s (%s)\n", $url, $response->code ?? 'no response code');
@@ -112,7 +112,7 @@ function executeRequest(HttpRequest $request) {
 
 function assertValidResponse(int $code): void {
     if ($code >= 400) {
-        fail(ERROR_W19, "Server responded with error " . $code);
+        fail(ERROR_N02, "Server responded with error " . $code);
     }
 }
 

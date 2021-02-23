@@ -254,19 +254,6 @@ function getFieldValue(string $fieldName) {
         : $field->getValue();
 }
 
-function assertFieldValue(string $fieldName, string $expected) {
-    assertPageContainsFieldWithName($fieldName);
-
-    $field = stf\getForm()->getFieldByName($fieldName);
-
-    $actual = $field instanceof stf\Checkbox ? $field->isChecked() : $field->getValue();
-
-    if ($actual !== $expected) {
-        fail(ERROR_W09, sprintf("Expected value to be '%s' but it was '%s'",
-            $expected, $actual));
-    }
-}
-
 function containsString(string $needle) : stf\AbstractMatcher {
     return new stf\ContainsStringMatcher($needle);
 }

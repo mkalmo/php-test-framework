@@ -538,7 +538,7 @@ class SimpleHttpResponse extends SimpleStickyError
         $raw = $this->readAll($socket);
         if ($socket->isError()) {
             $this->setError('Error reading socket [' . $socket->getError() . ']');
-            $this->setErrorCode(ERROR_W01);
+            $this->setErrorCode(ERROR_N01);
             return;
         }
         $this->parse($raw);
