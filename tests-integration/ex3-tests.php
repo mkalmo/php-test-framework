@@ -23,6 +23,16 @@ setIncludePath();
 
 #Helpers
 
+function assertContains(array $allPosts, Post $post) {
+    foreach ($allPosts as $each) {
+        if ($each->title === $post->title && $each->text === $post->text) {
+            return;
+        }
+    }
+
+    throw new stf\FrameworkException(ERROR_C01, "Did not find saved post");
+}
+
 function setIncludePath() {
     set_include_path(get_include_path() . PATH_SEPARATOR . getProjectDirectory());
 }

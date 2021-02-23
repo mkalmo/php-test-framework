@@ -34,12 +34,13 @@ function runTests(?PointsReporter $reporter = null) {
 
             printf("\n### Test %s() failed ###\n\n", $testName);
         } catch (FrameworkException $ex) {
-            printf("### ERROR: %s ####\n", $ex->getCode());
-            printf("%s \n", $ex->getMessage());
-            printf("Stack trace: \n%s\n", getStackTrace($ex, $testName));
-            printf("\n### Test %s() failed ###\n\n", $testName);
+            [$callerFile, $callerLine] = getCallerLineAndFile($ex, $testName);
+            printf("\n### Test %s() failed on line %s in file %s(%s)\n\n",
+                $testName, $callerLine, $callerFile, $callerLine);
+            printf("ERROR %s: %s\n\n", $ex->getCode(), $ex->getMessage());
+            printf("Stack trace: %s\n\n", $ex->getTraceAsString());
         } catch (RuntimeException $e) {
-            printf("\n### Test %s() failed ###\n\n %s\n\n", $testName, $e);
+            printf("\n### Test %s() failed \n\n %s\n\n", $testName, $e);
         }
     }
 
@@ -50,25 +51,19 @@ function runTests(?PointsReporter $reporter = null) {
     }
 }
 
-function getStackTrace(Exception $ex, string $testName) : string {
-    $result = '';
+function getCallerLineAndFile(FrameworkException $ex, string $testName) : array {
+    $trace = $ex->getTrace();
 
-    // print $ex;
+    for ($i = 0; $i < count($trace); $i++) {
+        if (!isset($trace[$i]['file'])) {
+            $callerFile = $trace[$i - 1]['file'];
+            $callerLine = $trace[$i - 1]['line'];
 
-    foreach ($ex->getTrace() as $line) {
-        $functionName = $line['function'] ?? '';
-        $lineNr = $line['line'] ?? '';
-        $filePath = $line['file'] ?? '';
-
-        if ($functionName === $testName) {
-            break;
+            return [$callerFile, $callerLine];
         }
-
-        $result .= sprintf("  %s() on line %s: %s(%s)\n",
-            $functionName, $lineNr,  $filePath, $lineNr);
     }
 
-    return $result;
+    throw new RuntimeException('Unexpected error');
 }
 
 function getTestNames() : array {
