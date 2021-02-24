@@ -1,5 +1,12 @@
 <?php
 
+$phpVersion = explode('.', PHP_VERSION);
+
+if ($phpVersion[0] < 7 || $phpVersion[1] < 4) {
+    die('This framework requires Php version 7.4 or greater. '.
+        "Found Php version " . PHP_VERSION . '.');
+}
+
 require_once 'runner.php';
 require_once 'util.php';
 require_once 'domain.php';
