@@ -1,12 +1,12 @@
 <?php
 
-namespace tplLib;
+namespace tplLib\node;
 
-class TextNode extends AbstractNode {
+class WsNode extends AbstractNode {
 
     private string $text;
 
-    public function __construct($text) {
+    public function __construct(string $text) {
         parent::__construct('');
 
         $this->text = $text;
@@ -17,7 +17,7 @@ class TextNode extends AbstractNode {
     }
 
     public function render($scope) : string {
-        return $scope->replaceCurlyExpression($this->text);
+        return $this->text;
     }
 
 }

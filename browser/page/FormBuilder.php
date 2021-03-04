@@ -1,20 +1,8 @@
 <?php
 
-namespace stf;
+namespace stf\browser\page;
 
-require_once __DIR__ . '/../parser/HtmlLexer.php';
-require_once __DIR__ . '/../parser/HtmlParser.php';
-require_once __DIR__ . '/../parser/TreeBuilderActions.php';
-require_once __DIR__ . '/../parser/node/AbstractNode.php';
-require_once __DIR__ . '/../parser/node/WsNode.php';
-require_once __DIR__ . '/../parser/node/TextNode.php';
-require_once __DIR__ . '/../parser/node/MiscNode.php';
-
-require_once 'Form.php';
-require_once 'TextField.php';
-require_once 'Button.php';
-
-use tplLib\TagNode;
+use tplLib\node\TagNode;
 
 class FormBuilder {
 

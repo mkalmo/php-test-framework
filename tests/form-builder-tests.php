@@ -2,6 +2,10 @@
 
 require_once '../public-api.php';
 
+use stf\browser\page\PageParser;
+use stf\browser\page\PageBuilder;
+use stf\browser\page\Form;
+
 function buildsRadioButtons() {
     $html = '<form><input name="r1" type="radio" value="v1" />
                    <input name="r1" type="radio" checked value="v2" />
@@ -45,7 +49,6 @@ function buildsButtons() {
     assertThat($b2->getName(), is('b2'));
     assertThat($b2->getValue(), is(''));
     assertThat($b2->getFormAction(), is('?cmd=2'));
-
 }
 
 function buildsTextArea() {
@@ -59,10 +62,10 @@ function buildsTextArea() {
 
 #Helpers
 
-function getForm(string $html) : stf\Form {
-    $parser = new stf\PageParser($html);
+function getForm(string $html) : Form {
+    $parser = new PageParser($html);
 
-    $builder = new stf\PageBuilder($html, $parser->getNodeTree());
+    $builder = new PageBuilder($html, $parser->getNodeTree());
 
     return $builder->getPage()->getForm();
 }

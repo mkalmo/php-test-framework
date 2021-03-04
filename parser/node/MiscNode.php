@@ -1,7 +1,6 @@
 <?php
 
-namespace tplLib;
-
+namespace tplLib\node;
 
 class MiscNode extends AbstractNode {
 

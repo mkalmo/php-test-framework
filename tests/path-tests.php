@@ -1,9 +1,8 @@
 <?php
 
-include_once '../public-api.php';
-include_once '../browser/Path.php';
+require_once '../public-api.php';
 
-use stf\Path;
+use stf\browser\Path;
 
 function absoluteOrDirectory() {
     assertThat(path('/')->isAbsolute(), is(true));

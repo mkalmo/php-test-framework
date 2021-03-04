@@ -1,6 +1,6 @@
 <?php
 
-namespace tplLib;
+namespace tplLib\node;
 
 abstract class AbstractNode {
 

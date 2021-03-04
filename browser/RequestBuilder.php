@@ -1,8 +1,9 @@
 <?php
 
-namespace stf;
+namespace stf\browser;
 
-require_once 'HttpRequest.php';
+use stf\browser\page\Form;
+use stf\FrameworkException;
 
 class RequestBuilder {
 
@@ -14,13 +15,15 @@ class RequestBuilder {
         $this->currentUrl = $currentUrl;
     }
 
-    public function requestFromButtonPress(string $buttonName) : HttpRequest {
-        $button = $this->form->getButtonByName($buttonName);
+    public function requestFromButtonPress(
+        string $buttonName, string $buttonValue) : HttpRequest {
+
+        $button = $this->form->getButtonByNameAndValue($buttonName, $buttonValue);
 
         if ($button === null) {
             throw new FrameworkException(
                 ERROR_W06,
-                sprintf("Form does not contain button with name '%s'.", $buttonName));
+                sprintf("Form does not contain submit button with name '%s'.", $buttonName));
         }
 
         $action = $button->getFormAction() ?: $this->form->getAction();

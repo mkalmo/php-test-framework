@@ -1,17 +1,12 @@
 <?php
 
-namespace stf;
-
-include_once __DIR__ . '/../simpletest/user_agent.php';
-include_once __DIR__ . '/../FrameworkException.php';
-
-include_once 'HttpResponse.php';
-include_once 'HttpRequest.php';
+namespace stf\browser;
 
 use \SimpleUserAgent;
 use \SimpleGetEncoding;
 use \SimplePostEncoding;
 use \SimpleUrl;
+use stf\FrameworkException;
 
 class HttpClient {
 

@@ -1,10 +1,8 @@
 <?php
 
-namespace stf;
+namespace stf\browser\page;
 
-use RuntimeException;
-
-require_once 'AbstractInput.php';
+use \RuntimeException;
 
 class RadioGroup extends AbstractInput {
 

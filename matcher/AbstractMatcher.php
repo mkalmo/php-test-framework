@@ -1,6 +1,6 @@
 <?php
 
-namespace stf;
+namespace stf\matcher;
 
 abstract class AbstractMatcher {
 

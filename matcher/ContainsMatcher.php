@@ -1,11 +1,10 @@
 <?php
 
-namespace stf;
+namespace stf\matcher;
 
 use \RuntimeException;
 
-require_once 'AbstractMatcher.php';
-require_once 'MatcherError.php';
+use function \stf\asString;
 
 class ContainsMatcher extends AbstractMatcher {
 

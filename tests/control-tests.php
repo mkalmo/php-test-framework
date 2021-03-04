@@ -2,9 +2,12 @@
 
 require_once '../public-api.php';
 
+use stf\browser\page\RadioGroup;
+use stf\browser\page\Checkbox;
+
 function radioGroupTest() {
 
-    $radio = new stf\RadioGroup('r1');
+    $radio = new RadioGroup('r1');
 
     $radio->addOption("v1");
     $radio->addOption("v2");
@@ -21,7 +24,7 @@ function radioGroupTest() {
 }
 
 function checkboxTest() {
-    $checkbox = new stf\Checkbox('c1', 'on');
+    $checkbox = new Checkbox('c1', 'on');
 
     assertThat($checkbox->isChecked(), is(false));
     assertThat($checkbox->getValue(), is(''));

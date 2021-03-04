@@ -1,8 +1,6 @@
 <?php
 
-namespace tplLib;
-
-require_once 'AbstractNode.php';
+namespace tplLib\node;
 
 class RootNode extends AbstractNode {
 

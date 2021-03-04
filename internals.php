@@ -2,16 +2,14 @@
 
 namespace stf;
 
-use Exception;
-
-require_once 'Globals.php';
-require_once 'browser/Url.php';
-require_once 'browser/HttpClient.php';
-require_once 'browser/HttpRequest.php';
-require_once 'browser/HttpResponse.php';
-require_once 'browser/RequestBuilder.php';
-require_once 'browser/page/PageBuilder.php';
-require_once 'browser/page/PageParser.php';
+use \Exception;
+use stf\browser\HttpClient;
+use stf\browser\HttpRequest;
+use stf\browser\RequestBuilder;
+use stf\browser\page\Element;
+use stf\browser\page\Form;
+use stf\browser\page\PageBuilder;
+use stf\browser\page\PageParser;
 
 function getForm() : Form {
     $form = getGlobals()->page->getForm();
@@ -28,18 +26,6 @@ function getGlobals() : Globals {
 
     return $GLOBALS[$key] ??= new Globals();
 }
-
-//function getBrowser() : Browser {
-//    $key = "---STF-BROWSER---";
-//
-//    return $GLOBALS[$key] = $GLOBALS[$key] ?? new Browser(getSettings());
-//}
-//
-//function getSettings() : Settings {
-//    $key = "---STF-SETTINGS---";
-//
-//    return $GLOBALS[$key] = $GLOBALS[$key] ?? new Settings();
-//}
 
 function getElementWithId($id) : ?Element {
     $elements = getGlobals()->page->getElements();
@@ -59,13 +45,13 @@ function navigateTo(string $destination) : void {
     executeRequest($request);
 }
 
-function submitFormByButtonPress(string $buttonName) {
+function submitFormByButtonPress(string $buttonName, string $buttonValue) {
     $g = getGlobals();
 
     $form = $g->page->getForm();
 
     $request = (new RequestBuilder($form, $g->currentUrl))
-        ->requestFromButtonPress($buttonName);
+        ->requestFromButtonPress($buttonName, $buttonValue);
 
     executeRequest($request);
 }
@@ -128,7 +114,7 @@ function assertValidHtml(PageParser $pageParser): void {
         $result->getMessage(), $result->getLine(), $result->getColumn());
     $message .= sprintf("%s\n", $result->getSource());
 
-    fail(ERROR_H01, $message);
+    throw new FrameworkParseException(ERROR_H01, $message, $pageParser->getHtml());
 }
 
 function assertValidUrl(string $url) : void {

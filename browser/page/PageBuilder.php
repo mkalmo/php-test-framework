@@ -1,26 +1,10 @@
 <?php
 
-namespace stf;
+namespace stf\browser\page;
 
-require_once __DIR__ . '/../parser/HtmlLexer.php';
-require_once __DIR__ . '/../parser/HtmlParser.php';
-require_once __DIR__ . '/../parser/TreeBuilderActions.php';
-require_once __DIR__ . '/../parser/node/AbstractNode.php';
-require_once __DIR__ . '/../parser/node/WsNode.php';
-require_once __DIR__ . '/../parser/node/TextNode.php';
-require_once __DIR__ . '/../parser/node/MiscNode.php';
+use tplLib\node\TagNode;
+use tplLib\node\AbstractNode;
 
-require_once 'Form.php';
-require_once 'TextField.php';
-require_once 'Button.php';
-require_once 'Page.php';
-require_once 'Link.php';
-require_once 'Element.php';
-
-require_once 'FormBuilder.php';
-
-use tplLib\TagNode;
-use tplLib\AbstractNode;
 use \RuntimeException;
 
 class PageBuilder {

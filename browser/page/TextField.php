@@ -1,8 +1,6 @@
 <?php
 
-namespace stf;
-
-require_once 'AbstractInput.php';
+namespace stf\browser\page;
 
 class TextField extends AbstractInput {
 
@@ -14,7 +12,7 @@ class TextField extends AbstractInput {
     }
 
     public function __toString() : string {
-        return sprintf("Input: %s %s",
+        return sprintf("Input %s=%s",
             $this->getName(), $this->value);
     }
 

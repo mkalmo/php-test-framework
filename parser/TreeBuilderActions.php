@@ -2,11 +2,11 @@
 
 namespace tplLib;
 
-require_once 'node/RootNode.php';
-require_once 'node/TagNode.php';
-require_once 'node/TextNode.php';
-require_once 'node/MiscNode.php';
-require_once 'node/WsNode.php';
+use tplLib\node\MiscNode;
+use tplLib\node\RootNode;
+use tplLib\node\TagNode;
+use tplLib\node\TextNode;
+use tplLib\node\WsNode;
 
 class TreeBuilderActions {
 

@@ -1,8 +1,8 @@
 <?php
 
-namespace stf;
+namespace stf\browser\page;
 
-use tplLib\TagNode;
+use tplLib\node\TagNode;
 
 class Element {
 

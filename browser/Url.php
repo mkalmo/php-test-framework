@@ -1,10 +1,8 @@
 <?php
 
-namespace stf;
+namespace stf\browser;
 
-use RuntimeException;
-
-require_once 'Path.php';
+use \RuntimeException;
 
 class Url {
 

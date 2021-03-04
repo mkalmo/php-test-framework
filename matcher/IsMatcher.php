@@ -1,9 +1,8 @@
 <?php
 
-namespace stf;
+namespace stf\matcher;
 
-require_once 'AbstractMatcher.php';
-require_once 'MatcherError.php';
+use function stf\asString;
 
 class IsMatcher extends AbstractMatcher {
 

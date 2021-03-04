@@ -2,9 +2,6 @@
 
 namespace tplLib;
 
-require_once 'Token.php';
-require_once 'ParseException.php';
-
 class HtmlLexer {
 
     private $p;

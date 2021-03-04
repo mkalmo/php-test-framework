@@ -2,6 +2,10 @@
 
 require_once '../public-api.php';
 
+use stf\browser\page\PageParser;
+use stf\browser\page\PageBuilder;
+use stf\browser\page\Page;
+
 function buildPageSimple() {
     $html = '<a id="link1"> abc</a>';
 
@@ -23,10 +27,10 @@ function buildPage() {
 
 #Helpers
 
-function getPage(string $html) : stf\Page {
-    $parser = new stf\PageParser($html);
+function getPage(string $html) : Page {
+    $parser = new PageParser($html);
 
-    return (new stf\PageBuilder($html, $parser->getNodeTree()))->getPage();
+    return (new PageBuilder($html, $parser->getNodeTree()))->getPage();
 }
 
 stf\runTests();

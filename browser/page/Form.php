@@ -1,10 +1,6 @@
 <?php
 
-namespace stf;
-
-require_once 'RadioGroup.php';
-require_once 'Checkbox.php';
-require_once 'TextField.php';
+namespace stf\browser\page;
 
 class Form {
 
@@ -35,6 +31,19 @@ class Form {
         return $button ?? null;
     }
 
+    public function getButtonByNameAndValue($buttonName, $buttonValue) : ?Button {
+        $buttons = array_filter($this->buttons,
+            function ($button) use ($buttonName, $buttonValue) {
+
+            return $button->getName() === $buttonName
+                && $button->getName() === $buttonValue;
+        });
+
+        $button = array_shift($buttons);
+
+        return $button ?? null;
+    }
+
     public function getTextFieldByName($fieldName) : ?TextField {
         return $this->getFieldByNameCommon($fieldName, TextField::class);
     }
@@ -58,7 +67,7 @@ class Form {
         return $this->getFieldByNameCommon($fieldName, AbstractInput::class);
     }
 
-    public function getCheckboxByName($fieldName) : Checkbox {
+    public function getCheckboxByName($fieldName) : ?Checkbox {
         return $this->getFieldByNameCommon($fieldName, Checkbox::class);
     }
 
@@ -79,11 +88,14 @@ class Form {
     }
 
     public function __toString() : string {
-        $fields = array_map(function ($each) {
-            return "  " . $each->__toString();
-        }, $this->fields);
+        $elements = [...$this->fields, ...$this->buttons];
 
-        return "Form: " . PHP_EOL . join(PHP_EOL, $fields) . PHP_EOL;
+        $strings = array_map(function ($each) {
+            return "  " . $each->__toString();
+        }, $elements);
+
+        return "Form: " . PHP_EOL
+            . join(PHP_EOL, $strings) . PHP_EOL;
     }
 
 

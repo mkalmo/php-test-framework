@@ -2,10 +2,7 @@
 
 namespace stf;
 
-require_once 'browser/parser/ParseException.php';
-
 use \RuntimeException;
-use tplLib\ParseException;
 
 function runTests(?PointsReporter $reporter = null) {
     $total = 0;
@@ -25,28 +22,45 @@ function runTests(?PointsReporter $reporter = null) {
 
             printf("%s() OK\n", $testName);
 
-        } catch (ParseException $ex) {
-            printf("### ERROR: %s ####\n", ERROR_H01);
-            printf("Found incorrect HTML \n");
-            printf("%s \n", $ex->getMessage());
-            printf("Position %s \n", $ex->pos);
+        } catch (FrameworkParseException $ex) {
 
-            printf("\n### Test %s() failed ###\n\n", $testName);
+            handleFrameworkException($ex, $testName);
+
+            printPageSourceIfNeeded($ex->getFullSource());
+
         } catch (FrameworkException $ex) {
-            [$callerFile, $callerLine] = getCallerLineAndFile($ex, $testName);
-            printf("\n### Test %s() failed on line %s in file %s(%s)\n\n",
-                $testName, $callerLine, $callerFile, $callerLine);
-            printf("ERROR %s: %s\n\n", $ex->getCode(), $ex->getMessage());
-            printf("Stack trace: %s\n\n", $ex->getTraceAsString());
+
+            handleFrameworkException($ex, $testName);
+
         } catch (RuntimeException $e) {
             printf("\n### Test %s() failed \n\n %s\n\n", $testName, $e);
         }
     }
 
-    printf("%s of %s tests passed.\n", $successful, $total);
+    printf("\n%s of %s tests passed.\n", $successful, $total);
 
     if ($reporter) {
         $reporter->execute($successful);
+    }
+}
+
+function printPageSourceIfNeeded(string $source) {
+    if (!getGlobals()->printPageSourceOnParseError) {
+        return;
+    }
+
+    print("##################  Page source start #################### \n");
+    print $source . PHP_EOL;
+    print("##################  Page source end ###################### \n");
+}
+
+function handleFrameworkException(FrameworkException $ex, string $testName) {
+    [$callerFile, $callerLine] = getCallerLineAndFile($ex, $testName);
+    printf("\n### Test %s() failed on line %s in file %s(%s)\n\n",
+        $testName, $callerLine, $callerFile, $callerLine);
+    printf("ERROR %s: %s\n\n", $ex->getCode(), $ex->getMessage());
+    if (getGlobals()->printStackTrace) {
+        printf("Stack trace: %s\n\n", $ex->getTraceAsString());
     }
 }
 

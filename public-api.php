@@ -1,10 +1,12 @@
 <?php
 
-$phpVersion = explode('.', PHP_VERSION);
+list ($phpMajorVersion, $phpMinorVersion) = explode('.', PHP_VERSION);
 
-if ($phpVersion[0] < 7 || $phpVersion[1] < 4) {
+if (intval($phpMajorVersion) < 7
+    || intval($phpMajorVersion) === 7 && intval($phpMinorVersion) < 4) {
+
     die('This framework requires Php version 7.4 or greater. '.
-        "Found Php version " . PHP_VERSION . '.');
+        "Found Php version " . PHP_VERSION . '.' . PHP_EOL);
 }
 
 require_once 'runner.php';
@@ -12,13 +14,15 @@ require_once 'util.php';
 require_once 'domain.php';
 require_once 'internals.php';
 require_once 'constants.php';
-require_once 'browser/page/Form.php';
-include_once 'PointsReporter.php';
 
-require_once 'matchers/ContainsMatcher.php';
-require_once 'matchers/ContainsStringMatcher.php';
-require_once 'matchers/ContainsNotStringMatcher.php';
-require_once 'matchers/IsMatcher.php';
+include_once __DIR__ . '/simpletest/user_agent.php';
+
+require_once 'autoload.php';
+
+use stf\matcher\ContainsMatcher;
+use stf\matcher\AbstractMatcher;
+use stf\matcher\ContainsStringMatcher;
+use stf\matcher\ContainsNotStringMatcher;
 
 function assertThrows($function): void {
     try {
@@ -34,7 +38,7 @@ function fail($code, $message): void {
     throw new stf\FrameworkException($code, $message);
 }
 
-function assertThat($actual, stf\AbstractMatcher $matcher, $message = null): void {
+function assertThat($actual, stf\matcher\AbstractMatcher $matcher, $message = null): void {
     if ($matcher->matches($actual)) {
         return;
     }
@@ -48,20 +52,29 @@ function assertThat($actual, stf\AbstractMatcher $matcher, $message = null): voi
     throw new stf\FrameworkException($error->getCode(), $error->getMessage());
 }
 
-function is($value) : stf\AbstractMatcher {
-    return new stf\IsMatcher($value);
+function is($value) : stf\matcher\AbstractMatcher {
+    return new stf\matcher\IsMatcher($value);
 }
 
 function setBaseUrl(string $url) : void {
-    stf\getGlobals()->currentUrl = new stf\Url($url);
+    stf\getGlobals()->baseUrl = new stf\browser\Url($url);
+    stf\getGlobals()->currentUrl = new stf\browser\Url($url);
 }
 
-function logRequests(bool $flag) : void {
+function setLogRequests(bool $flag) : void {
     stf\getGlobals()->logRequests = $flag;
 }
 
-function logPostParameters(bool $flag) : void {
+function setLogPostParameters(bool $flag) : void {
     stf\getGlobals()->logPostParameters = $flag;
+}
+
+function setPrintStackTrace(bool $flag) : void {
+    stf\getGlobals()->printStackTrace = $flag;
+}
+
+function setPrintPageSourceOnParseError(bool $flag) : void {
+    stf\getGlobals()->printPageSourceOnParseError = $flag;
 }
 
 function getResponseCode() : int {
@@ -186,7 +199,7 @@ function assertPageContainsText($textToBeFound) : void {
         return;
     }
 
-    fail(ERROR_H04, sprintf("Did not find text '%s' on current page.",
+    fail(ERROR_H04, sprintf("Did not find text '%s' on the current page.",
         $textToBeFound));
 }
 
@@ -225,8 +238,8 @@ function navigateTo(string $url) {
     stf\navigateTo($url);
 }
 
-function clickButton(string $buttonName) {
-    stf\submitFormByButtonPress($buttonName);
+function clickButton(string $buttonName, string $buttonValue = '') {
+    stf\submitFormByButtonPress($buttonName, $buttonValue);
 }
 
 function setTextFieldValue(string $fieldName, string $value) {
@@ -260,19 +273,19 @@ function getFieldValue(string $fieldName) {
 
     $field = stf\getForm()->getFieldByName($fieldName);
 
-    return $field instanceof stf\Checkbox
+    return $field instanceof stf\browser\page\Checkbox
         ? $field->isChecked()
         : $field->getValue();
 }
 
-function containsString(string $needle) : stf\AbstractMatcher {
-    return new stf\ContainsStringMatcher($needle);
+function containsString(string $needle) : AbstractMatcher {
+    return new ContainsStringMatcher($needle);
 }
 
-function contains(array $needleArray) : stf\AbstractMatcher {
-    return new stf\ContainsMatcher($needleArray);
+function contains(array $needleArray) : AbstractMatcher {
+    return new ContainsMatcher($needleArray);
 }
 
-function doesNotContainString(string $needle) : stf\AbstractMatcher {
-    return new stf\ContainsNotStringMatcher($needle);
+function doesNotContainString(string $needle) : AbstractMatcher {
+    return new ContainsNotStringMatcher($needle);
 }

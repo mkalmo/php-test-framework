@@ -1,11 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace tplLib;
+namespace tplLib\node;
 
 use RuntimeException;
-
-require_once 'RootNode.php';
-require_once 'AbstractNode.php';
 
 class TagNode extends AbstractNode {
 

@@ -1,7 +1,8 @@
 <?php
 
-include_once '../public-api.php';
-include_once '../browser/Url.php';
+require_once '../public-api.php';
+
+use stf\browser\Url;
 
 function handlesNull() {
     assertThat(url('http://lh')->navigateTo(null)->asString(), is('http://lh'));
@@ -50,8 +51,8 @@ function fromDir() {
 
 #Helpers
 
-function url(?string $url) : stf\Url {
-    return new stf\Url($url);
+function url(?string $url) : Url {
+    return new Url($url);
 }
 
 stf\runTests();

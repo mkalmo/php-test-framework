@@ -6,6 +6,8 @@ const ERROR_C01 = 'C01'; // message should be enough
 const ERROR_C02 = 'C02'; // not equal
 const ERROR_C03 = 'C03'; // string does not contain substring
 
+const ERROR_D01 = 'D01'; // wrong page id
+
 const ERROR_N01 = 'N01'; // Error reading socket
 const ERROR_N02 = 'N02'; // bad response code
 

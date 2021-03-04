@@ -2,7 +2,7 @@
 
 require_once '../public-api.php';
 
-require_once '../browser/page/PageParser.php';
+use stf\browser\page\PageParser;
 
 function parserErrors() {
 
@@ -14,7 +14,7 @@ function parserErrors() {
             </html>
             END;
 
-    $parser = new stf\PageParser($html);
+    $parser = new PageParser($html);
 
     $result = $parser->validate();
 

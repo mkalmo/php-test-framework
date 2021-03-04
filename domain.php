@@ -7,6 +7,47 @@ function getPageId() : ?string {
     return stf\getGlobals()->page->getId();
 }
 
+function gotoLandingPage() {
+    $landingPageUrl = stf\getGlobals()->baseUrl->asString();
+
+    navigateTo($landingPageUrl);
+
+    assertCorrectPageId('book-list-page');
+}
+
+function clickBookFormLink() {
+    clickLinkWithId('book-form-link');
+
+    assertCorrectPageId('book-form-page');
+}
+
+function clickAuthorFormLink() {
+    clickLinkWithId('author-form-link');
+
+    assertCorrectPageId('author-form-page');
+}
+
+function clickBookFormSubmitButton() {
+    clickButton('submitButton');
+
+    assertCorrectPageId('book-list-page');
+}
+
+function clickAuthorFormSubmitButton() {
+    clickButton('submitButton');
+
+    assertCorrectPageId('author-list-page');
+}
+
+function assertCorrectPageId($expectedPageId) {
+    if (getPageId() !== $expectedPageId) {
+        $message = sprintf("Page id should now be '%s' but was '%s'",
+            $expectedPageId, getPageId());
+
+        throw new stf\FrameworkException(ERROR_D01, $message);
+    }
+}
+
 class Author {
     public string $firstName;
     public string $lastName;

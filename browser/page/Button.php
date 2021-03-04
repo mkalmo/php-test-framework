@@ -1,8 +1,6 @@
 <?php
 
-namespace stf;
-
-require_once 'AbstractInput.php';
+namespace stf\browser\page;
 
 class Button extends AbstractInput {
 

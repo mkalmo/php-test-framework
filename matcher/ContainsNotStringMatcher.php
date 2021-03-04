@@ -1,11 +1,8 @@
 <?php
 
-namespace stf;
+namespace stf\matcher;
 
-require_once 'AbstractMatcher.php';
-require_once 'MatcherError.php';
-
-class ContainsStringMatcher extends AbstractMatcher {
+class ContainsNotStringMatcher extends AbstractMatcher {
 
     private string $needle;
 
@@ -14,14 +11,14 @@ class ContainsStringMatcher extends AbstractMatcher {
     }
 
     public function matches($actual) : bool {
-        return strpos($actual, $this->needle) !== false;
+        return strpos($actual, $this->needle) === false;
     }
 
     public function getError(
         $actual, ?string $message = null) : MatcherError {
 
         return new MatcherError(ERROR_C03,
-            sprintf('Does not contain string: %s', $this->needle));
+            sprintf('Should not contain string: %s', $this->needle));
     }
 }
 
