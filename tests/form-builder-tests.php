@@ -51,6 +51,19 @@ function buildsButtons() {
     assertThat($b2->getFormAction(), is('?cmd=2'));
 }
 
+function buildsButtonsWithValue() {
+    $html = '<form>
+             <button type="submit" name="cmd" 
+                     value="c1">Cmd 1</button>
+             <button type="submit" name="cmd" 
+                     value="c2">Cmd 2</button></form>';
+
+    $button = getForm($html)->getButtonByNameAndValue('cmd', 'c1');
+
+    assertThat($button->getName(), is('cmd'));
+    assertThat($button->getValue(), is('c1'));
+}
+
 function buildsTextArea() {
     $html = '<form><textarea name="a1"> Hello </textarea></form>';
 

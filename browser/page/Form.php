@@ -21,22 +21,20 @@ class Form {
         return $this->fields;
     }
 
-    public function getButtonByName($buttonName) : ?Button {
-        $buttons = array_filter($this->buttons, function ($button) use ($buttonName) {
-            return $button->getName() === $buttonName;
-        });
-
-        $button = array_shift($buttons);
-
-        return $button ?? null;
+    public function getButtonByName(string $buttonName) : ?Button {
+        return $this->getButtonByNameAndValue($buttonName, null);
     }
 
-    public function getButtonByNameAndValue($buttonName, $buttonValue) : ?Button {
+    public function getButtonByNameAndValue(
+        string $buttonName, ?string $buttonValue) : ?Button {
+
         $buttons = array_filter($this->buttons,
             function ($button) use ($buttonName, $buttonValue) {
 
-            return $button->getName() === $buttonName
-                && $button->getName() === $buttonValue;
+            return $buttonValue === null
+                ? $button->getName() === $buttonName
+                : $button->getName() === $buttonName
+                    && $button->getValue() === $buttonValue;
         });
 
         $button = array_shift($buttons);
