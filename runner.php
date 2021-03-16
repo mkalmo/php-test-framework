@@ -5,15 +5,12 @@ namespace stf;
 use \RuntimeException;
 
 function runTests(?PointsReporter $reporter = null) {
-    $total = 0;
     $successful = 0;
 
-    foreach (getTestNames() as $testName) {
+    foreach (getTestNamesToRun() as $testName) {
         if (!function_exists($testName)) {
             continue;
         }
-
-        $total++;
 
         try {
             call_user_func($testName);
@@ -37,9 +34,9 @@ function runTests(?PointsReporter $reporter = null) {
         }
     }
 
-    printf("\n%s of %s tests passed.\n", $successful, $total);
+    printf("\n%s of %s tests passed.\n", $successful, count(getAllTestNames()));
 
-    if ($reporter) {
+    if ($reporter && !containsSelectedTests(getTestNamesToRun())) {
         $reporter->execute($successful);
     }
 }
@@ -79,12 +76,16 @@ function getCallerLineAndFile(FrameworkException $ex, string $testName) : array 
     throw new RuntimeException('Unexpected error');
 }
 
-function getTestNames() : array {
+function getAllTestNames() : array {
     $testFilePath = get_included_files()[0];
 
     $testFileSource = file_get_contents($testFilePath);
 
-    $testNames = getFunctionNames($testFileSource);
+    return getTestFunctionNames($testFileSource);
+}
+
+function getTestNamesToRun() : array {
+    $testNames = getAllTestNames();
 
     if (containsSelectedTests($testNames)) {
         $testNames = array_filter($testNames, function($name) {
@@ -108,7 +109,7 @@ function startsWith($subject, $match) : bool {
     return stripos($subject, $match) === 0;
 }
 
-function getFunctionNames(string $src): array {
+function getTestFunctionNames(string $src): array {
 
     $tokens = token_get_all($src);
 

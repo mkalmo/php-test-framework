@@ -31,11 +31,11 @@ class Form {
         $buttons = array_filter($this->buttons,
             function ($button) use ($buttonName, $buttonValue) {
 
-            return $buttonValue === null
-                ? $button->getName() === $buttonName
-                : $button->getName() === $buttonName
+                return $buttonValue === null
+                    ? $button->getName() === $buttonName
+                    : $button->getName() === $buttonName
                     && $button->getValue() === $buttonValue;
-        });
+            });
 
         $button = array_shift($buttons);
 
@@ -49,7 +49,7 @@ class Form {
     private function getFieldByNameCommon($fieldName, $type) {
         $fields = array_filter($this->fields, function ($field) use ($fieldName, $type) {
             return $field->getName() === $fieldName
-                    && (get_class($field) === $type || is_subclass_of($field, $type));
+                && (get_class($field) === $type || is_subclass_of($field, $type));
         });
 
         $field = array_shift($fields);
@@ -95,8 +95,4 @@ class Form {
         return "Form: " . PHP_EOL
             . join(PHP_EOL, $strings) . PHP_EOL;
     }
-
-
 }
-
-

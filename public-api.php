@@ -142,6 +142,15 @@ function assertPageDoesNotContainFieldWithName($name) : void {
         sprintf("Current page should not contain field with name '%s'.", $name));
 }
 
+function assertPageDoesNotContainButtonWithName($name) : void {
+    if (stf\getForm()->getButtonByName($name) === null) {
+        return;
+    }
+
+    fail(ERROR_W19,
+        sprintf("Current page should not contain button with name '%s'.", $name));
+}
+
 function assertPageContainsCheckboxWithName($name) : void {
     if (stf\getForm()->getCheckboxByName($name) !== null) {
         return;
@@ -188,7 +197,7 @@ function assertPageDoesNotContainElementWithId($id) : void {
         return;
     }
 
-    fail(ERROR_W17,
+    fail(ERROR_W09,
         sprintf("Current page should not contain element with id '%s'.", $id));
 }
 
@@ -238,7 +247,7 @@ function navigateTo(string $url) {
     stf\navigateTo($url);
 }
 
-function clickButton(string $buttonName, string $buttonValue = '') {
+function clickButton(string $buttonName, ?string $buttonValue = null) {
     stf\submitFormByButtonPress($buttonName, $buttonValue);
 }
 

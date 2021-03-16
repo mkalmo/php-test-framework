@@ -17,8 +17,8 @@ class ContainsNotStringMatcher extends AbstractMatcher {
     public function getError(
         $actual, ?string $message = null) : MatcherError {
 
-        return new MatcherError(ERROR_C03,
-            sprintf('Should not contain string: %s', $this->needle));
+        return new MatcherError(ERROR_C04,
+            sprintf("Should not contain string: '%s'", $this->needle));
     }
 }
 

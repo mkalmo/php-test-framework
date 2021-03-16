@@ -18,7 +18,7 @@ class ContainsStringMatcher extends AbstractMatcher {
         $actual, ?string $message = null) : MatcherError {
 
         return new MatcherError(ERROR_C03,
-            sprintf('Does not contain string: %s', $this->needle));
+            sprintf("Should contain string: '%s'", $this->needle));
     }
 }
 

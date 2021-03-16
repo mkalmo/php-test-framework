@@ -45,7 +45,7 @@ function navigateTo(string $destination) : void {
     executeRequest($request);
 }
 
-function submitFormByButtonPress(string $buttonName, string $buttonValue) {
+function submitFormByButtonPress(string $buttonName, ?string $buttonValue) {
     $g = getGlobals();
 
     $form = $g->page->getForm();

@@ -11,7 +11,7 @@ function findsFunctionNamesFromSource() {
             #Helpers function a3(){}
             EOF;
 
-    $names = stf\getFunctionNames($src);
+    $names = stf\getTestFunctionNames($src);
 
     assertThat($names, contains(['a1', 'a2']));
 }

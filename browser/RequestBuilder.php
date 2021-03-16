@@ -16,7 +16,7 @@ class RequestBuilder {
     }
 
     public function requestFromButtonPress(
-        string $buttonName, string $buttonValue) : HttpRequest {
+        string $buttonName, ?string $buttonValue) : HttpRequest {
 
         $button = $this->form->getButtonByNameAndValue($buttonName, $buttonValue);
 

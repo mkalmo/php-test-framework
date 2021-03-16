@@ -33,8 +33,20 @@ function clickBookFormSubmitButton() {
     assertCorrectPageId('book-list-page');
 }
 
+function clickBookFormDeleteButton() {
+    clickButton('deleteButton');
+
+    assertCorrectPageId('book-list-page');
+}
+
 function clickAuthorFormSubmitButton() {
     clickButton('submitButton');
+
+    assertCorrectPageId('author-list-page');
+}
+
+function clickAuthorFormDeleteButton() {
+    clickButton('deleteButton');
 
     assertCorrectPageId('author-list-page');
 }
@@ -57,15 +69,14 @@ class Author {
 class Book {
     public string $title;
     public string $grade;
-    public string $isRead;
+    public bool $isRead;
 }
 
 function getSampleAuthor() : Author {
     $author = new Author();
-    $randomValue = substr(md5(mt_rand()), 0, 9);
-    $author->firstName = $randomValue . '0';
-    $author->lastName = $randomValue . '1';
-    $author->grade = 5;
+    $author->firstName = getRandomString(3) . ' ' . getRandomString(4);
+    $author->lastName = getRandomString(5) . ' ' . getRandomString(3);
+    $author->grade = 4;
     return $author;
 }
 
@@ -75,8 +86,7 @@ function getRandomString(int $length) : string {
 
 function getSampleBook() : Book {
     $book = new Book();
-    $randomValue = getRandomString(10);
-    $book->title = $randomValue . '0';
+    $book->title = getRandomString(5) . ' ' . getRandomString(5);
     $book->grade = 5;
     $book->isRead = true;
     return $book;
