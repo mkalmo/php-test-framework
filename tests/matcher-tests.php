@@ -32,4 +32,14 @@ function isMatcher() {
     });
 }
 
+function containsOnceMatcher() {
+    $text = 'abcb';
+
+    assertThat($text, containsStringOnce('a'));
+
+    assertThrows(function () use ($text) {
+        assertThat($text, containsStringOnce('b'));
+    });
+}
+
 stf\runTests();

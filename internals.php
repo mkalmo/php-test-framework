@@ -10,6 +10,7 @@ use stf\browser\page\Element;
 use stf\browser\page\Form;
 use stf\browser\page\PageBuilder;
 use stf\browser\page\PageParser;
+use stf\browser\page\NodeTree;
 
 function getForm() : Form {
     $form = getGlobals()->page->getForm();
@@ -89,8 +90,9 @@ function executeRequest(HttpRequest $request) {
     assertValidResponse($response->code);
     assertValidHtml($pageParser);
 
-    $page = (new PageBuilder($response->contents,
-        $pageParser->getNodeTree()))->getPage();
+    $nodeTree = new NodeTree($pageParser->getNodeTree());
+
+    $page = (new PageBuilder($nodeTree, $response->contents))->getPage();
 
     $g->responseCode = $response->code;
     $g->page = $page;

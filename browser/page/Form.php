@@ -69,6 +69,10 @@ class Form {
         return $this->getFieldByNameCommon($fieldName, Checkbox::class);
     }
 
+    public function getSelectByName($fieldName) : ?Select {
+        return $this->getFieldByNameCommon($fieldName, Select::class);
+    }
+
     public function getAction() : ?string {
         return $this->action;
     }

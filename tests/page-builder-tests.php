@@ -2,6 +2,7 @@
 
 require_once '../public-api.php';
 
+use stf\browser\page\NodeTree;
 use stf\browser\page\PageParser;
 use stf\browser\page\PageBuilder;
 use stf\browser\page\Page;
@@ -30,7 +31,9 @@ function buildPage() {
 function getPage(string $html) : Page {
     $parser = new PageParser($html);
 
-    return (new PageBuilder($html, $parser->getNodeTree()))->getPage();
+    $nodeTree = new NodeTree($parser->getNodeTree());
+
+    return (new PageBuilder($nodeTree, $html))->getPage();
 }
 
 stf\runTests();

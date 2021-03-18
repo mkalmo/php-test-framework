@@ -6,9 +6,7 @@ use tplLib\HtmlLexer;
 use tplLib\HtmlParser;
 use tplLib\ParseException;
 use tplLib\node\AbstractNode;
-use tplLib\node\TextNode;
 use tplLib\TreeBuilderActions;
-use tplLib\node\WsNode;
 
 class PageParser {
 
@@ -63,22 +61,6 @@ class PageParser {
         $source .= str_pad('^', $colNr + 4, ' ', STR_PAD_LEFT) . PHP_EOL;
 
         return ValidationResult::failure($ex->message, $lineNr, $colNr, $source);
-    }
-
-    public static function getTextLines($node, $withWhiteSpace = false) : array {
-        if ($node instanceof TextNode) {
-            return [$node->getText()];
-        } else if ($withWhiteSpace && $node instanceof WsNode) {
-            return [$node->getText()];
-        }
-
-        $childTexts = [];
-        foreach ($node->getChildren() as $child) {
-            $childTextLines = self::getTextLines($child, $withWhiteSpace);
-            $childTexts = [...$childTexts, ...$childTextLines];
-        }
-
-        return array_filter($childTexts);
     }
 
     public function getHtml(): string {

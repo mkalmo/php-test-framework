@@ -5,6 +5,7 @@ require_once '../public-api.php';
 use stf\browser\page\PageParser;
 use stf\browser\page\PageBuilder;
 use stf\browser\page\Form;
+use stf\browser\page\NodeTree;
 
 function buildsRadioButtons() {
     $html = '<form><input name="r1" type="radio" value="v1" />
@@ -29,6 +30,27 @@ function buildsCheckboxes() {
 
     assertThat($c1->getValue(), is(''));
     assertThat($c2->getValue(), is('v2'));
+}
+
+function buildsSelect() {
+    $html = "<form>
+             <select name='s1'>
+             <OPTION value='v1'> \n Value 1 \n </OPTION>
+             <option selected value='v2'> \n Value 2 \n </option>
+             <option value='v3'> \n Value 3 \n </option>
+             </select>
+             </form>";
+
+    $select = getForm($html)->getSelectByName('s1');
+
+    assertThat($select->getName(), is('s1'));
+
+    assertThat($select->hasOptionWithLabel('Value 1'), is(true));
+    assertThat($select->hasOptionWithLabel('Value 2'), is(true));
+    assertThat($select->hasOptionWithLabel('Value 3'), is(true));
+    assertThat($select->hasOptionWithLabel('Value 4'), is(false));
+
+    assertThat($select->getValue(), is('v2'));
 }
 
 function buildsButtons() {
@@ -78,9 +100,9 @@ function buildsTextArea() {
 function getForm(string $html) : Form {
     $parser = new PageParser($html);
 
-    $builder = new PageBuilder($html, $parser->getNodeTree());
+    $nodeTree = new NodeTree($parser->getNodeTree());
 
-    return $builder->getPage()->getForm();
+    return (new PageBuilder($nodeTree, $html))->getPage()->getForm();
 }
 
 stf\runTests();

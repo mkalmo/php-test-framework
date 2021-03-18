@@ -56,6 +56,10 @@ function is($value) : stf\matcher\AbstractMatcher {
     return new stf\matcher\IsMatcher($value);
 }
 
+function containsStringOnce($value) : stf\matcher\AbstractMatcher {
+    return new stf\matcher\ContainsStringOnceMatcher($value);
+}
+
 function setBaseUrl(string $url) : void {
     stf\getGlobals()->baseUrl = new stf\browser\Url($url);
     stf\getGlobals()->currentUrl = new stf\browser\Url($url);
@@ -122,6 +126,15 @@ function assertPageContainsRadioWithName($name) : void {
 
     fail(ERROR_W14,
         sprintf("Current page does not contain radio with name '%s'.", $name));
+}
+
+function assertPageContainsSelectWithName($name) : void {
+    if (stf\getForm()->getSelectByName($name) !== null) {
+        return;
+    }
+
+    fail(ERROR_W16,
+        sprintf("Current page does not contain select with name '%s'.", $name));
 }
 
 function assertPageContainsFieldWithName($name) : void {
@@ -255,6 +268,12 @@ function setTextFieldValue(string $fieldName, string $value) {
     assertPageContainsTextFieldWithName($fieldName);
 
     stf\getForm()->getTextFieldByName($fieldName)->setValue($value);
+}
+
+function selectOptionWithText(string $fieldName, string $text) {
+    assertPageContainsSelectWithName($fieldName);
+
+    stf\getForm()->getSelectByName($fieldName)->selectOptionWithText(trim($text));
 }
 
 function setCheckboxValue(string $fieldName, bool $value) {

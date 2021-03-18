@@ -6,6 +6,7 @@ const ERROR_C01 = 'C01'; // message should be enough
 const ERROR_C02 = 'C02'; // not equal
 const ERROR_C03 = 'C03'; // string does not contain substring
 const ERROR_C04 = 'C04'; // contains substring but should not
+const ERROR_C05 = 'C05'; // does not contain substring once
 
 const ERROR_D01 = 'D01'; // wrong page id
 

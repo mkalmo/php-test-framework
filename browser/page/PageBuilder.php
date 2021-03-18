@@ -2,83 +2,55 @@
 
 namespace stf\browser\page;
 
-use tplLib\node\TagNode;
-use tplLib\node\AbstractNode;
-
 use \RuntimeException;
 
 class PageBuilder {
 
-    private string $html;
-    private AbstractNode $tree;
+    private NodeTree $nodeTree;
+    private string $source;
 
-    public function __construct(string $html, AbstractNode $tree) {
-        $this->html = $html;
-        $this->tree = $tree;
+    public function __construct(NodeTree $nodeTree, string $source) {
+        $this->nodeTree = $nodeTree;
+        $this->source = $source;
     }
 
     function getPage() : Page {
-        $text = html_entity_decode($this->getText($this->tree));
+        $text = html_entity_decode($this->nodeTree->getFullText());
 
-        $page = new Page($this->html, $text,
-            $this->getLinks($this->tree), $this->getForm());
+        $page = new Page($this->source, $text,
+            $this->getLinks(), $this->getForm());
 
-        $page->setElements($this->getAllElements($this->tree));
+        $page->setElements($this->getAllElements());
 
         return $page;
     }
 
     private function getForm() : ?Form {
-        $forms = $this->findNodesByTagNames($this->tree, ['form']);
+        $formBuilder = new FormBuilder($this->nodeTree);
 
-        if (count($forms) === 0) {
+        $formCount = $formBuilder->getFormCount();
+
+        if ($formCount === 0) {
             return null;
         }
 
-        if (count($forms) > 1) {
+        if ($formCount > 1) {
             throw new RuntimeException("This framework supports only one form per page");
         }
 
-        $formElements = $this->findNodesByTagNames(
-            $forms[0], ['input', 'button', 'textarea']);
-
-        return (new FormBuilder($forms[0], $formElements))->buildForm();
+        return $formBuilder->getForm();
     }
 
-    private function findNodesByTagNames($node, $names) : array {
-        $nodeList = array_filter($this->getAllTagNodes($node), function ($each) use ($names) {
-            return in_array($each->getTagName(), $names);
-        });
-
-        return array_values($nodeList);
-    }
-
-    private function getAllElements(AbstractNode $node) : array {
-        $nodes = $this->getAllTagNodes($node);
+    private function getAllElements() : array {
+        $nodes = $this->nodeTree->getAllTagNodes();
 
         return array_map(function ($node) {
             return new Element($node);
         }, $nodes);
     }
 
-    private function getAllTagNodes(AbstractNode $node) : array {
-        $result = [];
-
-        if ($node instanceof TagNode) {
-            $result[] = $node;
-        }
-
-        foreach ($node->getChildren() as $child) {
-            $result = array_merge(
-                $result,
-                $this->getAllTagNodes($child));
-        }
-
-        return $result;
-    }
-
-    private function getLinks($tree) : array {
-        $nodes = $this->findNodesByTagNames($tree, ['a']);
+    private function getLinks() : array {
+        $nodes = $this->nodeTree->findNodesByTagNames(['a']);
 
         return array_map(function ($linkNode) {
             return new Link($this->getLinkText($linkNode),
@@ -88,11 +60,7 @@ class PageBuilder {
     }
 
     private function getLinkText($linkNode) : string {
-        return join("", PageParser::getTextLines($linkNode, true));
-    }
-
-    private function getText($node) : string {
-        return join("\n", PageParser::getTextLines($node));
+        return join("", $this->nodeTree->getTextLines($linkNode, true));
     }
 }
 
