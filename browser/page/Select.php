@@ -38,14 +38,34 @@ class Select extends AbstractInput {
     }
 
     public function selectOptionWithText(string $text) {
+        $found = false;
         foreach ($this->options as &$each) {
             if ($each[1] === $text) {
                 $each[2] = true;
-                return;
+                $found = true;
+            } else {
+                $each[2] = false;
             }
         }
 
-        throw new RuntimeException("unknown option text: " . $text);
+        if (!$found) {
+            throw new RuntimeException("unknown option text: " . $text);
+        }
+    }
+
+    public function getSelectedOptionText() : string {
+        if (count($this->options) < 1) {
+            return '';
+        }
+
+        $text = $this->options[0][1];
+        foreach ($this->options as $each) {
+            if ($each[2]) {
+                $text = $each[1];
+            }
+        }
+
+        return $text;
     }
 
     public function __toString() : string {

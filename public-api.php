@@ -52,14 +52,6 @@ function assertThat($actual, stf\matcher\AbstractMatcher $matcher, $message = nu
     throw new stf\FrameworkException($error->getCode(), $error->getMessage());
 }
 
-function is($value) : stf\matcher\AbstractMatcher {
-    return new stf\matcher\IsMatcher($value);
-}
-
-function containsStringOnce($value) : stf\matcher\AbstractMatcher {
-    return new stf\matcher\ContainsStringOnceMatcher($value);
-}
-
 function setBaseUrl(string $url) : void {
     stf\getGlobals()->baseUrl = new stf\browser\Url($url);
     stf\getGlobals()->currentUrl = new stf\browser\Url($url);
@@ -270,10 +262,16 @@ function setTextFieldValue(string $fieldName, string $value) {
     stf\getForm()->getTextFieldByName($fieldName)->setValue($value);
 }
 
+function forceFieldValue(string $fieldName, string $value) {
+    stf\getForm()->deleteFieldByName($fieldName);
+
+    stf\getForm()->addTextField($fieldName, $value);
+}
+
 function selectOptionWithText(string $fieldName, string $text) {
     assertPageContainsSelectWithName($fieldName);
 
-    stf\getForm()->getSelectByName($fieldName)->selectOptionWithText(trim($text));
+    stf\getForm()->getSelectByName($fieldName)->selectOptionWithText($text);
 }
 
 function setCheckboxValue(string $fieldName, bool $value) {
@@ -306,14 +304,30 @@ function getFieldValue(string $fieldName) {
         : $field->getValue();
 }
 
-function containsString(string $needle) : AbstractMatcher {
-    return new ContainsStringMatcher($needle);
+function getSelectedOptionText(string $fieldName) : string {
+    assertPageContainsSelectWithName($fieldName);
+
+    $select = stf\getForm()->getSelectByName($fieldName);
+
+    return $select->getSelectedOptionText();
+}
+
+function is($value) : stf\matcher\AbstractMatcher {
+    return new stf\matcher\IsMatcher($value);
 }
 
 function contains(array $needleArray) : AbstractMatcher {
     return new ContainsMatcher($needleArray);
 }
 
+function containsString(string $needle) : AbstractMatcher {
+    return new ContainsStringMatcher($needle);
+}
+
 function doesNotContainString(string $needle) : AbstractMatcher {
     return new ContainsNotStringMatcher($needle);
+}
+
+function containsStringOnce($value) : stf\matcher\AbstractMatcher {
+    return new stf\matcher\ContainsStringOnceMatcher($value);
 }

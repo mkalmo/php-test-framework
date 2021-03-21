@@ -9,11 +9,15 @@ class Form {
     private array $fields = [];
     private array $buttons = [];
 
-    public function addField($field) {
+    public function addField($field) : void {
         $this->fields[] = $field;
     }
 
-    public function addButton($button) {
+    public function addTextField(string $name, string $value) : void {
+        $this->fields[] = new TextField($name, $value);
+    }
+
+    public function addButton($button) : void {
         $this->buttons[] = $button;
     }
 
@@ -40,6 +44,14 @@ class Form {
         $button = array_shift($buttons);
 
         return $button ?? null;
+    }
+
+    public function deleteFieldByName($fieldName) {
+        $fields = array_filter($this->fields, function ($field) use ($fieldName) {
+            return $field->getName() !== $fieldName;
+        });
+
+        $this->fields = array_values($fields);
     }
 
     public function getTextFieldByName($fieldName) : ?TextField {
