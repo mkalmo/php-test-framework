@@ -31,7 +31,7 @@ function assertThrows($function): void {
         return;
     }
 
-    throw new AssertionError("Expected to throw but did not");
+    throw new stf\FrameworkException(ERROR_C01, "Expected to throw but did not");
 }
 
 function fail($code, $message): void {
@@ -330,4 +330,8 @@ function doesNotContainString(string $needle) : AbstractMatcher {
 
 function containsStringOnce($value) : stf\matcher\AbstractMatcher {
     return new stf\matcher\ContainsStringOnceMatcher($value);
+}
+
+function containsAllowingHtmlSpecialChars($value) : stf\matcher\AbstractMatcher {
+    return new stf\matcher\ContainsAllowingHtmlSpecialCharsMatcher($value);
 }
