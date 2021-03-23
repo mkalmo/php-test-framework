@@ -42,21 +42,18 @@ function containsOnceMatcher() {
     });
 }
 
-function containsAllowingHtmlSpecialCharsMatcher() {
-    $text1 = '< \' " >';
-    $text2 = '&lt; \' " &gt;';
-    $text3 = '&lt; &apos; &quot; &gt;';
-    $text4 = '&lt; &#039; &quot; &gt;';
+function containsInAnyOrderMatcher() {
+    $actual = [1, 2, 3];
 
-    assertThat($text1, containsAllowingHtmlSpecialChars($text1));
-    assertThat($text2, containsAllowingHtmlSpecialChars($text1));
-    assertThat($text3, containsAllowingHtmlSpecialChars($text1));
-    assertThat($text4, containsAllowingHtmlSpecialChars($text1));
+    assertThat($actual, containsInAnyOrder([1, 2, 3]));
+    assertThat($actual, containsInAnyOrder([2, 1, 3]));
 
-    assertThrows(function () {
-        assertThat(
-            '&lt; \' &quot; &gt;',
-            containsAllowingHtmlSpecialChars('&lt; \' " &gt;'));
+    assertThrows(function () use ($actual) {
+        assertThat($actual, containsInAnyOrder([]));
+    });
+
+    assertThrows(function () use ($actual) {
+        assertThat($actual, containsInAnyOrder([1, 2, 4]));
     });
 }
 

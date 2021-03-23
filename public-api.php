@@ -328,10 +328,10 @@ function doesNotContainString(string $needle) : AbstractMatcher {
     return new ContainsNotStringMatcher($needle);
 }
 
-function containsStringOnce($value) : stf\matcher\AbstractMatcher {
+function containsStringOnce(string $value) : stf\matcher\AbstractMatcher {
     return new stf\matcher\ContainsStringOnceMatcher($value);
 }
 
-function containsAllowingHtmlSpecialChars($value) : stf\matcher\AbstractMatcher {
-    return new stf\matcher\ContainsAllowingHtmlSpecialCharsMatcher($value);
+function containsInAnyOrder(array $value) : stf\matcher\AbstractMatcher {
+    return new stf\matcher\ContainsInAnyOrderMatcher($value);
 }
