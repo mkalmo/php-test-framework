@@ -4,6 +4,12 @@ require_once '../public-api.php';
 
 use stf\browser\Url;
 
+function asString() {
+    assertThat(url('http://lh')->asString(), is('http://lh'));
+
+    assertThat(url('http://db.lh')->asString(), is('http://db.lh'));
+}
+
 function handlesNull() {
     assertThat(url('http://lh')->navigateTo(null)->asString(), is('http://lh'));
 }

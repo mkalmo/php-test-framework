@@ -60,7 +60,7 @@ class Url {
     }
 
     private function getHost($fullUrl) : ?string {
-        $hostRegex = '/^https?:\/\/\w+(:\d+)?/';
+        $hostRegex = '/^https?:\/\/[\w.]+(:\d+)?/';
         preg_match($hostRegex, $fullUrl, $matches);
         return $matches[0] ?? '';
     }
