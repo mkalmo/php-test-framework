@@ -47,6 +47,6 @@ setBaseUrl(BASE_URL);
 setLogRequests(false);
 setLogPostParameters(true);
 setPrintStackTrace(false);
-setPrintPageSourceOnParseError(false);
+setPrintPageSourceOnError(false);
 
 stf\runTests(new stf\PointsReporter([10 => 5]));

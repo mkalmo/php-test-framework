@@ -19,15 +19,11 @@ function runTests(?PointsReporter $reporter = null) {
 
             printf("%s() OK\n", $testName);
 
-        } catch (FrameworkParseException $ex) {
-
-            handleFrameworkException($ex, $testName);
-
-            printPageSourceIfNeeded($ex->getFullSource());
-
         } catch (FrameworkException $ex) {
 
             handleFrameworkException($ex, $testName);
+
+            printPageSourceIfNeeded();
 
         } catch (RuntimeException $e) {
             printf("\n### Test %s() failed \n\n %s\n\n", $testName, $e);
@@ -41,13 +37,17 @@ function runTests(?PointsReporter $reporter = null) {
     }
 }
 
-function printPageSourceIfNeeded(string $source) {
-    if (!getGlobals()->printPageSourceOnParseError) {
+function printPageSourceIfNeeded() {
+    if (!getGlobals()->printPageSourceOnError) {
         return;
     }
 
+    $text = isset(getGlobals()->page)
+        ? getGlobals()->page->getSource()
+        : 'Nothing fetched yet';
+
     print("##################  Page source start #################### \n");
-    print $source . PHP_EOL;
+    print $text . PHP_EOL;
     print("##################  Page source end ###################### \n");
 }
 

@@ -69,8 +69,8 @@ function setPrintStackTrace(bool $flag) : void {
     stf\getGlobals()->printStackTrace = $flag;
 }
 
-function setPrintPageSourceOnParseError(bool $flag) : void {
-    stf\getGlobals()->printPageSourceOnParseError = $flag;
+function setPrintPageSourceOnError(bool $flag) : void {
+    stf\getGlobals()->printPageSourceOnError = $flag;
 }
 
 function getResponseCode() : int {

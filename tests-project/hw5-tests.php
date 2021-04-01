@@ -6,15 +6,9 @@ const BASE_URL = 'http://localhost:8080';
 
 function displaysErrorWhenSubmittingInvalidBookData() {
 
-    navigateTo(BASE_URL);
+    gotoLandingPage();
 
-    clickLinkWithId('book-form-link');
-
-    clickButton('submitButton');
-
-    assertPageContainsElementWithId('error-block');
-
-    setTextFieldValue('title', "aa");
+    clickBookFormLink();
 
     clickButton('submitButton');
 
@@ -22,7 +16,7 @@ function displaysErrorWhenSubmittingInvalidBookData() {
 
     setTextFieldValue('title', "aaa");
 
-    clickButton('submitButton');
+    clickBookFormSubmitButton();
 
     assertPageContainsElementWithId('message-block');
     assertPageDoesNotContainElementWithId('error-block');
@@ -30,12 +24,12 @@ function displaysErrorWhenSubmittingInvalidBookData() {
 
 function onValidationErrorDisplayedBookFormIsFilledWithInsertedData() {
 
-    navigateTo(BASE_URL);
+    gotoLandingPage();
 
-    clickLinkWithId('book-form-link');
+    clickBookFormLink();
 
-    setTextFieldValue('title', "a");
-    setRadioFieldValue('grade', "4");
+    setTextFieldValue('title', 'a');
+    setRadioFieldValue('grade', '4');
     setCheckboxValue('isRead', true);
 
     clickButton('submitButton');
@@ -47,32 +41,32 @@ function onValidationErrorDisplayedBookFormIsFilledWithInsertedData() {
 
 function displaysErrorWhenSubmittingInvalidAuthorData() {
 
-    navigateTo(BASE_URL);
+    gotoLandingPage();
 
-    clickLinkWithId('author-form-link');
+    clickAuthorFormLink();
 
     clickButton('submitButton');
 
     assertPageContainsElementWithId('error-block');
 
-    setTextFieldValue('firstName', "a");
-    setTextFieldValue('lastName', "aa");
+    setTextFieldValue('firstName', 'a');
+    setTextFieldValue('lastName', 'aa');
 
     clickButton('submitButton');
 
-    assertPageContainsElementWithId('message-block');
     assertPageDoesNotContainElementWithId('error-block');
+    assertPageContainsElementWithId('message-block');
 }
 
 function onValidationErrorDisplayedAuthorFormIsFilledWithInsertedData() {
 
-    navigateTo(BASE_URL);
+    gotoLandingPage();
 
-    clickLinkWithId('author-form-link');
+    clickAuthorFormLink();
 
-    setTextFieldValue('firstName', "a");
-    setTextFieldValue('lastName', "b");
-    setRadioFieldValue('grade', "3");
+    setTextFieldValue('firstName', 'a');
+    setTextFieldValue('lastName', 'b');
+    setRadioFieldValue('grade', '3');
 
     clickButton('submitButton');
 
@@ -83,17 +77,17 @@ function onValidationErrorDisplayedAuthorFormIsFilledWithInsertedData() {
 
 function canUpdateInsertedBooks() {
 
-    navigateTo(BASE_URL);
+    gotoLandingPage();
 
-    clickLinkWithId('book-form-link');
+    clickBookFormLink();
 
     $book = getSampleBook();
 
     setTextFieldValue('title', $book->title);
-    setRadioFieldValue('grade', 5);
+    setRadioFieldValue('grade', '5');
     setCheckboxValue('isRead', false);
 
-    clickButton('submitButton');
+    clickBookFormSubmitButton();
 
     clickLinkWithText($book->title);
 
@@ -105,7 +99,7 @@ function canUpdateInsertedBooks() {
 
     setTextFieldValue('title', $updatedBook->title);
 
-    clickButton('submitButton');
+    clickBookFormSubmitButton();
 
     assertThat(getPageText(), containsString($updatedBook->title));
     assertThat(getPageText(), doesNotContainString($book->title));
@@ -113,29 +107,29 @@ function canUpdateInsertedBooks() {
 
 function canUpdateInsertedAuthors() {
 
-    navigateTo(BASE_URL);
+    gotoLandingPage();
 
-    clickLinkWithId('author-form-link');
+    clickAuthorFormLink();
 
     $author = getSampleAuthor();
 
     setTextFieldValue('firstName', $author->firstName);
     setTextFieldValue('lastName', $author->lastName);
-    setRadioFieldValue('grade', '5');
+    setRadioFieldValue('grade', '2');
 
-    clickButton('submitButton');
+    clickAuthorFormSubmitButton();
 
     clickLinkWithText($author->firstName);
 
     assertThat(getFieldValue('firstName'), is($author->firstName));
     assertThat(getFieldValue('lastName'), is($author->lastName));
-    assertThat(getFieldValue('grade'), is('5'));
+    assertThat(getFieldValue('grade'), is('2'));
 
     $updatedAuthor = getSampleAuthor();
 
     setTextFieldValue('firstName', $updatedAuthor->firstName);
 
-    clickButton('submitButton');
+    clickAuthorFormSubmitButton();
 
     assertThat(getPageText(), containsString($updatedAuthor->firstName));
     assertThat(getPageText(), doesNotContainString($author->firstName));
@@ -143,63 +137,65 @@ function canUpdateInsertedAuthors() {
 
 function canDeleteInsertedBooks() {
 
-    navigateTo(BASE_URL);
+    gotoLandingPage();
 
-    clickLinkWithId('book-form-link');
+    clickBookFormLink();
 
     $book = getSampleBook();
 
     setTextFieldValue('title', $book->title);
 
-    clickButton('submitButton');
+    clickBookFormSubmitButton();
 
     clickLinkWithText($book->title);
 
-    clickButton('deleteButton');
+    clickBookFormDeleteButton();
 
     assertThat(getPageText(), doesNotContainString($book->title));
 }
 
 function canDeleteInsertedAuthors() {
 
-    navigateTo(BASE_URL);
+    gotoLandingPage();
 
-    clickLinkWithId('author-form-link');
+    clickAuthorFormLink();
 
     $author = getSampleAuthor();
 
     setTextFieldValue('firstName', $author->firstName);
     setTextFieldValue('lastName', $author->lastName);
 
-    clickButton('submitButton');
+    clickAuthorFormSubmitButton();
 
     clickLinkWithText($author->firstName);
 
-    clickButton('deleteButton');
+    clickAuthorFormDeleteButton();
 
     assertThat(getPageText(), doesNotContainString($author->firstName));
 }
 
 function bookFormsDeleteButtonIsNotVisibleWhenAddingNewBook() {
-    navigateTo(BASE_URL);
 
-    clickLinkWithId('book-form-link');
+    gotoLandingPage();
 
-    assertPageDoesNotContainFieldWithName('deleteButton');
+    clickBookFormLink();
+
+    assertPageDoesNotContainButtonWithName('deleteButton');
 }
 
 function authorFormsDeleteButtonIsNotVisibleWhenAddingNewAuthor() {
-    navigateTo(BASE_URL);
 
-    clickLinkWithId('author-form-link');
+    gotoLandingPage();
 
-    assertPageDoesNotContainFieldWithName('deleteButton');
+    clickAuthorFormLink();
+
+    assertPageDoesNotContainButtonWithName('deleteButton');
 }
 
 setBaseUrl(BASE_URL);
 setLogRequests(false);
 setLogPostParameters(false);
 setPrintStackTrace(false);
-setPrintPageSourceOnParseError(false);
+setPrintPageSourceOnError(true);
 
-stf\runTests();
+stf\runTests(new stf\PointsReporter([10 => 5]));

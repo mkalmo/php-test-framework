@@ -137,7 +137,7 @@ function assertValidHtml(PageParser $pageParser): void {
         $result->getMessage(), $result->getLine(), $result->getColumn());
     $message .= sprintf("%s\n", $result->getSource());
 
-    throw new FrameworkParseException(ERROR_H01, $message, $pageParser->getHtml());
+    throw new FrameworkException(ERROR_H01, $message);
 }
 
 function assertValidUrl(string $url) : void {

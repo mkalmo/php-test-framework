@@ -15,7 +15,7 @@ class Globals {
     public bool $logRequests = false;
     public bool $logPostParameters = false;
     public bool $printStackTrace = false;
-    public bool $printPageSourceOnParseError = false;
+    public bool $printPageSourceOnError = false;
 
 }
 
