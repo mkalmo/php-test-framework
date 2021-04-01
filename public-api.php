@@ -103,7 +103,7 @@ function assertPageContainsLinkWithId($linkId) : void {
 }
 
 function assertPageContainsTextFieldWithName($name) : void {
-    if (stf\getForm()->getTextFieldByName($name) !== null) {
+    if (stf\getFormSet()->getTextFieldByName($name) !== null) {
         return;
     }
 
@@ -112,7 +112,7 @@ function assertPageContainsTextFieldWithName($name) : void {
 }
 
 function assertPageContainsRadioWithName($name) : void {
-    if (stf\getForm()->getRadioByName($name) !== null) {
+    if (stf\getFormSet()->getRadioByName($name) !== null) {
         return;
     }
 
@@ -121,7 +121,7 @@ function assertPageContainsRadioWithName($name) : void {
 }
 
 function assertPageContainsSelectWithName($name) : void {
-    if (stf\getForm()->getSelectByName($name) !== null) {
+    if (stf\getFormSet()->getSelectByName($name) !== null) {
         return;
     }
 
@@ -130,7 +130,7 @@ function assertPageContainsSelectWithName($name) : void {
 }
 
 function assertPageContainsFieldWithName($name) : void {
-    if (stf\getForm()->getFieldByName($name) !== null) {
+    if (stf\getFormSet()->getFieldByName($name) !== null) {
         return;
     }
 
@@ -139,7 +139,7 @@ function assertPageContainsFieldWithName($name) : void {
 }
 
 function assertPageDoesNotContainFieldWithName($name) : void {
-    if (stf\getForm()->getFieldByName($name) === null) {
+    if (stf\getFormSet()->getFieldByName($name) === null) {
         return;
     }
 
@@ -148,7 +148,7 @@ function assertPageDoesNotContainFieldWithName($name) : void {
 }
 
 function assertPageDoesNotContainButtonWithName($name) : void {
-    if (stf\getForm()->getButtonByName($name) === null) {
+    if (stf\getFormSet()->getButtonByName($name) === null) {
         return;
     }
 
@@ -157,7 +157,7 @@ function assertPageDoesNotContainButtonWithName($name) : void {
 }
 
 function assertPageContainsCheckboxWithName($name) : void {
-    if (stf\getForm()->getCheckboxByName($name) !== null) {
+    if (stf\getFormSet()->getCheckboxByName($name) !== null) {
         return;
     }
 
@@ -166,7 +166,7 @@ function assertPageContainsCheckboxWithName($name) : void {
 }
 
 function assertPageContainsButtonWithName($name) : void {
-    if (stf\getForm()->getButtonByName($name) !== null) {
+    if (stf\getFormSet()->getButtonByName($name) !== null) {
         return;
     }
 
@@ -253,37 +253,41 @@ function navigateTo(string $url) {
 }
 
 function clickButton(string $buttonName, ?string $buttonValue = null) {
+    assertPageContainsButtonWithName($buttonName);
+
     stf\submitFormByButtonPress($buttonName, $buttonValue);
 }
 
 function setTextFieldValue(string $fieldName, string $value) {
     assertPageContainsTextFieldWithName($fieldName);
 
-    stf\getForm()->getTextFieldByName($fieldName)->setValue($value);
+    stf\getFormSet()->getTextFieldByName($fieldName)->setValue($value);
 }
 
 function forceFieldValue(string $fieldName, string $value) {
-    stf\getForm()->deleteFieldByName($fieldName);
+    $form = stf\getFormSet()->findFormContainingField($fieldName);
 
-    stf\getForm()->addTextField($fieldName, $value);
+    $form->deleteFieldByName($fieldName);
+
+    $form->addTextField($fieldName, $value);
 }
 
 function selectOptionWithText(string $fieldName, string $text) {
     assertPageContainsSelectWithName($fieldName);
 
-    stf\getForm()->getSelectByName($fieldName)->selectOptionWithText($text);
+    stf\getFormSet()->getSelectByName($fieldName)->selectOptionWithText($text);
 }
 
 function setCheckboxValue(string $fieldName, bool $value) {
     assertPageContainsCheckboxWithName($fieldName);
 
-    stf\getForm()->getCheckboxByName($fieldName)->check($value);
+    stf\getFormSet()->getCheckboxByName($fieldName)->check($value);
 }
 
 function setRadioFieldValue(string $fieldName, string $value) {
     assertPageContainsRadioWithName($fieldName);
 
-    $field = stf\getForm()->getRadioByName($fieldName);
+    $field = stf\getFormSet()->getRadioByName($fieldName);
 
     if ($field->hasOption($value)) {
         $field->selectOption($value);
@@ -297,7 +301,7 @@ function setRadioFieldValue(string $fieldName, string $value) {
 function getFieldValue(string $fieldName) {
     assertPageContainsFieldWithName($fieldName);
 
-    $field = stf\getForm()->getFieldByName($fieldName);
+    $field = stf\getFormSet()->getFieldByName($fieldName);
 
     return $field instanceof stf\browser\page\Checkbox
         ? $field->isChecked()
@@ -307,7 +311,7 @@ function getFieldValue(string $fieldName) {
 function getSelectedOptionText(string $fieldName) : string {
     assertPageContainsSelectWithName($fieldName);
 
-    $select = stf\getForm()->getSelectByName($fieldName);
+    $select = stf\getFormSet()->getSelectByName($fieldName);
 
     return $select->getSelectedOptionText();
 }

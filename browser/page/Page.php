@@ -7,16 +7,16 @@ class Page {
     private string $source;
     private string $text;
     private array $links;
-    private ?Form $form;
+    private FormSet $formSet;
     private array $elements = [];
 
     public function __construct(
-        string $source, string $text, array $links, ?Form $form) {
+        string $source, string $text, array $links, FormSet $formSet) {
 
         $this->source = $source;
         $this->text = $text;
         $this->links = $links;
-        $this->form = $form;
+        $this->formSet = $formSet;
     }
 
     public function setElements(array $elements): void {
@@ -41,12 +41,8 @@ class Page {
         return $nodeList[0]->getId();
     }
 
-    public function getForm(): ?Form {
-        return $this->form;
-    }
-
-    public function containsForm(): bool {
-        return $this->form !== null;
+    public function getFormSet(): FormSet {
+        return $this->formSet;
     }
 
     public function getLinkById(string $id) : ?Link {

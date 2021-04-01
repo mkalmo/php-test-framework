@@ -6,10 +6,22 @@ const BASE_URL = 'http://localhost:8080';
 
 setBaseUrl(BASE_URL);
 
-function bookListPageContainsCorrectMenu() {
-    navigateTo(BASE_URL);
+function repositoryContainsIndex() {
+    navigateTo('/');
+
+    if (getResponseCode() !== 200) {
+        fail(ERROR_C01, "Did not find file named index.html from root directory");
+    }
+}
+
+function defaultPageIsBookList() {
+    navigateTo('/');
 
     assertThat(getPageId(), is('book-list-page'));
+}
+
+function bookListPageContainsCorrectMenu() {
+    navigateTo('/');
 
     assertPageContainsLinkWithId('book-list-link');
     assertPageContainsLinkWithId('book-form-link');
@@ -18,11 +30,9 @@ function bookListPageContainsCorrectMenu() {
 }
 
 function bookFormPageContainsCorrectElements() {
-    navigateTo(BASE_URL);
+    navigateTo('/');
 
     clickLinkWithId('book-form-link');
-
-    assertThat(getPageId(), is('book-form-page'));
 
     assertPageContainsLinkWithId('book-list-link');
     assertPageContainsLinkWithId('book-form-link');
@@ -36,11 +46,9 @@ function bookFormPageContainsCorrectElements() {
 }
 
 function authorListPageContainsCorrectMenu() {
-    navigateTo(BASE_URL);
+    navigateTo('/');
 
     clickLinkWithId('author-list-link');
-
-    assertThat(getPageId(), is('author-list-page'));
 
     assertPageContainsLinkWithId('book-list-link');
     assertPageContainsLinkWithId('book-form-link');
@@ -49,11 +57,9 @@ function authorListPageContainsCorrectMenu() {
 }
 
 function authorFormPageContainsCorrectElements() {
-    navigateTo(BASE_URL);
+    navigateTo('/');
 
     clickLinkWithId('author-form-link');
-
-    assertThat(getPageId(), is('author-form-page'));
 
     assertPageContainsLinkWithId('book-list-link');
     assertPageContainsLinkWithId('book-form-link');
@@ -66,4 +72,31 @@ function authorFormPageContainsCorrectElements() {
     assertPageContainsButtonWithName('submitButton');
 }
 
-stf\runTests();
+function repositoryContainsCssFile() {
+    global $argc, $argv;
+
+    if ($argc < 2) {
+        die('Pass directory to scan as an argument' . PHP_EOL);
+    } else {
+        $path = realpath($argv[1]);
+    }
+
+    if ($path === false) {
+        die('Argument is not a correct directory' . PHP_EOL);
+    }
+
+    $it = new RecursiveDirectoryIterator($path);
+    $it = new RecursiveIteratorIterator($it);
+    $it = new RegexIterator($it, '/\.(\w+)$/i', RecursiveRegexIterator::GET_MATCH);
+
+    foreach($it as $each) {
+        $extension = strtolower($each[1]);
+        if ($extension === 'css') {
+            return;
+        };
+    }
+
+    fail(ERROR_C01, "Did not find css file from repository");
+}
+
+stf\runTests(new stf\PointsReporter([7 => 5]));

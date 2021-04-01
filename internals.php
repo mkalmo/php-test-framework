@@ -8,16 +8,16 @@ use stf\browser\HttpRequest;
 use stf\browser\HttpResponse;
 use stf\browser\RequestBuilder;
 use stf\browser\page\Element;
-use stf\browser\page\Form;
+use stf\browser\page\FormSet;
 use stf\browser\page\PageBuilder;
 use stf\browser\page\PageParser;
 use stf\browser\page\NodeTree;
 
-function getForm() : Form {
-    $form = getGlobals()->page->getForm();
+function getFormSet() : FormSet {
+    $form = getGlobals()->page->getFormSet();
 
     if ($form === null) {
-        fail(ERROR_W07, "Current page does not contain a form");
+        fail(ERROR_W07, "Current page does not contain any form elements");
     }
 
     return $form;
@@ -48,11 +48,11 @@ function navigateTo(string $destination) : void {
 }
 
 function submitFormByButtonPress(string $buttonName, ?string $buttonValue) {
-    $g = getGlobals();
+    $globals = getGlobals();
 
-    $form = $g->page->getForm();
+    $formSet = $globals->page->getFormSet();
 
-    $request = (new RequestBuilder($form, $g->currentUrl))
+    $request = (new RequestBuilder($formSet, $globals->currentUrl))
         ->requestFromButtonPress($buttonName, $buttonValue);
 
     executeRequestWithRedirects($request);

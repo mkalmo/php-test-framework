@@ -4,13 +4,10 @@ require_once '../public-api.php';
 
 const BASE_URL = 'http://localhost:8080';
 
-setBaseUrl(BASE_URL);
-logRequests(false);
-
 function submittingFormAddsPersonToList() {
-    navigateTo(BASE_URL);
+    gotoLandingPage();
 
-    clickLinkWithId('book-form-link');
+    clickBookFormLink();
 
     $book = getSampleBook();
 
@@ -18,16 +15,15 @@ function submittingFormAddsPersonToList() {
     setRadioFieldValue('grade', $book->grade);
     setCheckboxValue('isRead', $book->isRead);
 
-    clickButton('submitButton');
+    clickBookFormSubmitButton();
 
     assertPageContainsText($book->title);
 }
 
 function submittingAuthorFormAddsAuthorToList() {
+    gotoLandingPage();
 
-    navigateTo(BASE_URL);
-
-    clickLinkWithId('author-form-link');
+    clickAuthorFormLink();
 
     $author = getSampleAuthor();
 
@@ -35,7 +31,7 @@ function submittingAuthorFormAddsAuthorToList() {
     setTextFieldValue('lastName', $author->lastName);
     setRadioFieldValue('grade', $author->grade);
 
-    clickButton('submitButton');
+    clickAuthorFormSubmitButton();
 
     assertPageContainsText($author->firstName);
     assertPageContainsText($author->lastName);
@@ -43,24 +39,24 @@ function submittingAuthorFormAddsAuthorToList() {
 
 function canHandleDifferentSymbolsInBookTitles() {
 
-    navigateTo(BASE_URL);
+    gotoLandingPage();
 
-    clickLinkWithId('book-form-link');
+    clickBookFormLink();
 
     $title = "!.,:;\n" . getSampleBook()->title;
 
     setTextFieldValue('title', $title);
 
-    clickButton('submitButton');
+    clickBookFormSubmitButton();
 
     assertPageContainsText($title);
 }
 
 function canHandleDifferentSymbolsInAuthorNames() {
 
-    navigateTo(BASE_URL);
+    gotoLandingPage();
 
-    clickLinkWithId('author-form-link');
+    clickAuthorFormLink();
 
     $firstName = "!.,:;\n" . getSampleAuthor()->firstName;
     $lastName = "!.,:;\n" . getSampleAuthor()->lastName;
@@ -68,10 +64,16 @@ function canHandleDifferentSymbolsInAuthorNames() {
     setTextFieldValue('firstName', $firstName);
     setTextFieldValue('lastName', $lastName);
 
-    clickButton('submitButton');
+    clickAuthorFormSubmitButton();
 
     assertPageContainsText($firstName);
     assertPageContainsText($lastName);
 }
 
-stf\runTests();
+setBaseUrl(BASE_URL);
+setLogRequests(false);
+setLogPostParameters(false);
+setPrintStackTrace(false);
+setPrintPageSourceOnError(false);
+
+stf\runTests(new stf\PointsReporter([4 => 5]));

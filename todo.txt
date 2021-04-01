@@ -1,0 +1,2 @@
+
+Error when form contains inputs with the same name.

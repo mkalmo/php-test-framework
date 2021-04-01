@@ -2,6 +2,8 @@
 
 namespace stf\browser\page;
 
+use function stf\decode_html_entities;
+
 class TextField extends AbstractInput {
 
     private string $value;
@@ -17,7 +19,7 @@ class TextField extends AbstractInput {
     }
 
     public function getValue() : string {
-        return $this->value;
+        return decode_html_entities($this->value);
     }
 
     public function setValue(string $value): void {

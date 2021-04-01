@@ -4,7 +4,7 @@ require_once '../public-api.php';
 
 use stf\browser\page\PageParser;
 use stf\browser\page\PageBuilder;
-use stf\browser\page\Form;
+use stf\browser\page\FormSet;
 use stf\browser\page\NodeTree;
 
 function buildsRadioButtons() {
@@ -12,7 +12,7 @@ function buildsRadioButtons() {
                    <input name="r1" type="radio" checked value="v2" />
                    <input name="r1" type="radio" value="v3" /></form>';
 
-    $radio = getForm($html)->getRadioByName('r1');
+    $radio = getFormSet($html)->getRadioByName('r1');
 
     assertThat($radio->getValue(), is('v2'));
 
@@ -25,8 +25,8 @@ function buildsCheckboxes() {
     $html = '<form><input name="c1" type="checkbox" value="v1" />
                    <input name="c2" type="checkbox" checked value="v2" /></form>';
 
-    $c1 = getForm($html)->getCheckboxByName('c1');
-    $c2 = getForm($html)->getCheckboxByName('c2');
+    $c1 = getFormSet($html)->getCheckboxByName('c1');
+    $c2 = getFormSet($html)->getCheckboxByName('c2');
 
     assertThat($c1->getValue(), is(''));
     assertThat($c2->getValue(), is('v2'));
@@ -41,7 +41,7 @@ function buildsSelect() {
              </select>
              </form>";
 
-    $select = getForm($html)->getSelectByName('s1');
+    $select = getFormSet($html)->getSelectByName('s1');
 
     assertThat($select->getName(), is('s1'));
 
@@ -61,13 +61,13 @@ function buildsButtons() {
                    <button type="submit" name="b2" 
                            formaction="?cmd=2">Button 2</button></form>';
 
-    $b1 = getForm($html)->getButtonByName('b1');
+    $b1 = getFormSet($html)->getButtonByName('b1');
 
     assertThat($b1->getName(), is('b1'));
     assertThat($b1->getValue(), is('Button 1'));
     assertThat($b1->getFormAction(), is('?cmd=1'));
 
-    $b2 = getForm($html)->getButtonByName('b2');
+    $b2 = getFormSet($html)->getButtonByName('b2');
     assertThat($b2->getName(), is('b2'));
     assertThat($b2->getValue(), is(''));
     assertThat($b2->getFormAction(), is('?cmd=2'));
@@ -80,7 +80,7 @@ function buildsButtonsWithValue() {
              <button type="submit" name="cmd" 
                      value="c2">Cmd 2</button></form>';
 
-    $button = getForm($html)->getButtonByNameAndValue('cmd', 'c1');
+    $button = getFormSet($html)->getButtonByNameAndValue('cmd', 'c1');
 
     assertThat($button->getName(), is('cmd'));
     assertThat($button->getValue(), is('c1'));
@@ -89,20 +89,41 @@ function buildsButtonsWithValue() {
 function buildsTextArea() {
     $html = '<form><textarea name="a1"> Hello </textarea></form>';
 
-    $field = getForm($html)->getTextFieldByName('a1');
+    $field = getFormSet($html)->getTextFieldByName('a1');
 
     assertThat($field->getName(), is('a1'));
     assertThat($field->getValue(), is(' Hello '));
 }
 
+function handlesMultipleForms() {
+    $html = '<form><input name="t1"></form>
+             <form><input name="t2"></form>';
+
+    $field1 = getFormSet($html)->getTextFieldByName('t1');
+    $field2 = getFormSet($html)->getTextFieldByName('t2');
+
+    assertThat($field1->getName(), is('t1'));
+    assertThat($field2->getName(), is('t2'));
+
+}
+
+function throwsWhenDifferentFormsHaveElementWithSameName() {
+    $html = '<form><input name="t1"></form>
+             <form><input name="t1"></form>';
+
+    assertThrows(function () use ($html) {
+        getFormSet($html)->getTextFieldByName('t1');
+    });
+}
+
 #Helpers
 
-function getForm(string $html) : Form {
+function getFormSet(string $html) : FormSet {
     $parser = new PageParser($html);
 
     $nodeTree = new NodeTree($parser->getNodeTree());
 
-    return (new PageBuilder($nodeTree, $html))->getPage()->getForm();
+    return (new PageBuilder($nodeTree, $html))->getPage()->getFormSet();
 }
 
 stf\runTests();

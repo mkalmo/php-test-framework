@@ -2,7 +2,7 @@
 
 namespace stf\browser\page;
 
-use \RuntimeException;
+use tplLib\node\TagNode;
 
 class FormBuilder {
 
@@ -13,17 +13,19 @@ class FormBuilder {
         $this->nodeTree = $nodeTree;
     }
 
-    public function getFormCount() : int {
-        return count($this->nodeTree->findNodesByTagNames(['form']));
-    }
+    public function getFormSet() : FormSet {
+        $formSet = new FormSet();
 
-    public function getForm() : Form {
-        if ($this->getFormCount() !== 1) {
-            throw new RuntimeException("form count should be 1");
+        $formNodes = $this->nodeTree->findNodesByTagNames(['form']);
+
+        foreach ($formNodes as $formNode) {
+            $formSet->addForm($this->buildForm($formNode));
         }
 
-        $formNode = $this->nodeTree->findNodesByTagNames(['form'])[0];
+        return $formSet;
+    }
 
+    private function buildForm(TagNode $formNode) : Form {
         $formElements = $this->nodeTree->findChildNodesByTagNames(
             $formNode, ['input', 'button', 'textarea', 'select']);
 

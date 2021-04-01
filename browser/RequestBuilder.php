@@ -2,37 +2,32 @@
 
 namespace stf\browser;
 
-use stf\browser\page\Form;
-use stf\FrameworkException;
+use stf\browser\page\FormSet;
 
 class RequestBuilder {
 
-    private Form $form;
+    private FormSet $formSet;
     private Url $currentUrl;
 
-    public function __construct(Form $form, Url $currentUrl) {
-        $this->form = $form;
+    public function __construct(FormSet $formSet, Url $currentUrl) {
+        $this->formSet = $formSet;
         $this->currentUrl = $currentUrl;
     }
 
     public function requestFromButtonPress(
         string $buttonName, ?string $buttonValue) : HttpRequest {
 
-        $button = $this->form->getButtonByNameAndValue($buttonName, $buttonValue);
+        $form = $this->formSet->findFormContainingField($buttonName);
 
-        if ($button === null) {
-            throw new FrameworkException(
-                ERROR_W06,
-                sprintf("Form does not contain submit button with name '%s'.", $buttonName));
-        }
+        $button = $form->getButtonByNameAndValue($buttonName, $buttonValue);
 
-        $action = $button->getFormAction() ?: $this->form->getAction();
+        $action = $button->getFormAction() ?: $form->getAction();
 
-        $request = new HttpRequest($this->currentUrl, $action, $this->form->getMethod());
+        $request = new HttpRequest($this->currentUrl, $action, $form->getMethod());
 
         $request->addParameter($button->getName(), $button->getValue());
 
-        foreach ($this->form->getFields() as $field) {
+        foreach ($form->getFields() as $field) {
             $request->addParameter($field->getName(), $field->getValue() ?? '');
         }
 

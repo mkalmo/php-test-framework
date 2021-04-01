@@ -55,10 +55,21 @@ class Form {
     }
 
     public function getTextFieldByName($fieldName) : ?TextField {
-        return $this->getFieldByNameCommon($fieldName, TextField::class);
+        return $this->getFieldByNameAndType($fieldName, TextField::class);
     }
 
-    private function getFieldByNameCommon($fieldName, $type) {
+    public function containsInputByName($fieldName) : bool {
+        $input = [...$this->fields, ...$this->buttons];
+
+        foreach ($input as $field) {
+            if ($field->getName() === $fieldName) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function getFieldByNameAndType($fieldName, $type) {
         $fields = array_filter($this->fields, function ($field) use ($fieldName, $type) {
             return $field->getName() === $fieldName
                 && (get_class($field) === $type || is_subclass_of($field, $type));
@@ -70,19 +81,19 @@ class Form {
     }
 
     public function getRadioByName($fieldName) : ?RadioGroup {
-        return $this->getFieldByNameCommon($fieldName, RadioGroup::class);
+        return $this->getFieldByNameAndType($fieldName, RadioGroup::class);
     }
 
     public function getFieldByName($fieldName) : ?AbstractInput {
-        return $this->getFieldByNameCommon($fieldName, AbstractInput::class);
+        return $this->getFieldByNameAndType($fieldName, AbstractInput::class);
     }
 
     public function getCheckboxByName($fieldName) : ?Checkbox {
-        return $this->getFieldByNameCommon($fieldName, Checkbox::class);
+        return $this->getFieldByNameAndType($fieldName, Checkbox::class);
     }
 
     public function getSelectByName($fieldName) : ?Select {
-        return $this->getFieldByNameCommon($fieldName, Select::class);
+        return $this->getFieldByNameAndType($fieldName, Select::class);
     }
 
     public function getAction() : ?string {
