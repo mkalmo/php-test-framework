@@ -19,6 +19,7 @@ const ERROR_H02 = 'H02'; // bad characters in url
 const ERROR_H03 = 'H03'; // unexpected current url
 const ERROR_H04 = 'H04'; // no text on the page text
 const ERROR_H05 = 'H05'; // no text in the page source
+const ERROR_H06 = 'H06'; // This framework supports only one form per page in.
 
 const ERROR_W03 = 'W03'; // no link with id
 const ERROR_W04 = 'W04'; // no link with text

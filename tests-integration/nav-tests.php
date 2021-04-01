@@ -4,8 +4,6 @@ require_once '../public-api.php';
 
 const BASE_URL = 'http://localhost:8080';
 
-setBaseUrl(BASE_URL);
-
 function indexToA() {
     navigateTo('/');
 
@@ -61,5 +59,18 @@ function rootLink() {
 
     assertCurrentUrl(BASE_URL . "/a/a.html");
 }
+
+function redirect() {
+    navigateTo('/redirect.php');
+
+    assertCurrentUrl(BASE_URL . "/redirect.php?count=0");
+}
+
+setBaseUrl(BASE_URL);
+setLogRequests(false);
+setLogPostParameters(false);
+setPrintStackTrace(false);
+setPrintPageSourceOnParseError(false);
+
 
 stf\runTests();

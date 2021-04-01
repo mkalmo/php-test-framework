@@ -24,14 +24,16 @@ class HttpClient {
 
         $response = $agent->fetchResponse(new SimpleUrl($url), $encoding);
 
-        $headers = $response->getHeaders();
+        $headers = new HttpHeaders(
+            $response->getHeaders()->getResponseCode(),
+            $response->getHeaders()->getLocation() ?: null) ;
 
         if ($response->isError()) {
             throw new FrameworkException($response->getErrorCode(),
                 $response->getError());
         }
 
-        return new HttpResponse($headers->getResponseCode(), $response->getContent());
+        return new HttpResponse($headers, $response->getContent());
     }
 
 }

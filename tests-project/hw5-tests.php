@@ -4,10 +4,6 @@ require_once '../public-api.php';
 
 const BASE_URL = 'http://localhost:8080';
 
-setBaseUrl(BASE_URL);
-//logRequests(true);
-//logPostParameters(true);
-
 function displaysErrorWhenSubmittingInvalidBookData() {
 
     navigateTo(BASE_URL);
@@ -199,5 +195,11 @@ function authorFormsDeleteButtonIsNotVisibleWhenAddingNewAuthor() {
 
     assertPageDoesNotContainFieldWithName('deleteButton');
 }
+
+setBaseUrl(BASE_URL);
+setLogRequests(false);
+setLogPostParameters(false);
+setPrintStackTrace(false);
+setPrintPageSourceOnParseError(false);
 
 stf\runTests();

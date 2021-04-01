@@ -15,7 +15,7 @@ require_once dirname(__FILE__) . '/authentication.php';
 /**#@-*/
 
 if (! defined('DEFAULT_MAX_REDIRECTS')) {
-    define('DEFAULT_MAX_REDIRECTS', 3);
+    define('DEFAULT_MAX_REDIRECTS', 0);
 }
 if (! defined('DEFAULT_CONNECTION_TIMEOUT')) {
     define('DEFAULT_CONNECTION_TIMEOUT', 15);
