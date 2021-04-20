@@ -57,4 +57,16 @@ function containsInAnyOrderMatcher() {
     });
 }
 
+function isControllerLinkMatcher() {
+    assertThat("index.php", isControllerLink());
+
+    assertThat("index.php?a=1", isControllerLink());
+
+    assertThat("?a=1", isControllerLink());
+
+    assertThrows(function () {
+        assertThat("list.php", isControllerLink());
+    });
+}
+
 stf\runTests();

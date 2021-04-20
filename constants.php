@@ -36,4 +36,5 @@ const ERROR_W15 = 'W15'; // no checkbox with name
 const ERROR_W16 = 'W16'; // no select with name
 const ERROR_W18 = 'W18'; // field should not exist
 const ERROR_W19 = 'W19'; // button should not exist
+const ERROR_W20 = 'W20'; // not front controller link
 

@@ -339,3 +339,7 @@ function containsStringOnce(string $value) : stf\matcher\AbstractMatcher {
 function containsInAnyOrder(array $value) : stf\matcher\AbstractMatcher {
     return new stf\matcher\ContainsInAnyOrderMatcher($value);
 }
+
+function isControllerLink() : stf\matcher\AbstractMatcher {
+    return new stf\matcher\ControllerLinkMatcher();
+}
