@@ -78,13 +78,17 @@ class Select extends AbstractInput {
     }
 
     public function getValue() : string {
+        if (empty($this->options)) {
+            return '';
+        }
+
         foreach ($this->options as $each) {
             if ($each[2]) {
                 return $each[0];
             }
         }
 
-        return '';
+        return $this->options[0][0];
     }
 }
 

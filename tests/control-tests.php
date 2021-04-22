@@ -32,7 +32,7 @@ function selectTest() {
     $select->addOption("v2", "Value 2");
     $select->addOption("v3", "Value 3");
 
-    assertThat($select->getValue(), is(''));
+    assertThat($select->getValue(), is('v1'));
 
     $select->selectOptionWithText("Value 2");
 
