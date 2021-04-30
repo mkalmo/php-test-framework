@@ -4,6 +4,27 @@ require_once '../public-api.php';
 
 use stf\browser\Url;
 
+function requestParameters() {
+    $url = url('http://db.lh/a.php?a=1');
+
+    assertThat($url->asString(), is('http://db.lh/a.php?a=1'));
+    assertThat($url->getQueryString(), is('a=1'));
+
+    $url->addRequestParameter('b','2');
+
+    assertThat($url->getQueryString(), is('a=1&b=2'));
+
+    $url = url('http://db.lh/a.php');
+
+    assertThat($url->asString(), is('http://db.lh/a.php'));
+    assertThat($url->getQueryString(), is(''));
+
+    $url->addRequestParameter('b','2');
+
+    assertThat($url->asString(), is('http://db.lh/a.php?b=2'));
+    assertThat($url->getQueryString(), is('b=2'));
+}
+
 function asString() {
     assertThat(url('http://lh')->asString(), is('http://lh'));
 

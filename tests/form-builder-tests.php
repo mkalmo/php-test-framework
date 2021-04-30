@@ -35,7 +35,7 @@ function buildsCheckboxes() {
 function buildsSelect() {
     $html = "<form>
              <select name='s1'>
-             <OPTION value='v1'> \n Value 1 \n </OPTION>
+             <OPTION value> \n Value 1 \n </OPTION>
              <option selected value='v2'> \n Value 2 \n </option>
              <option value='v3'> \n Value 3 \n </option>
              </select>
@@ -65,11 +65,13 @@ function buildsButtons() {
 
     assertThat($b1->getName(), is('b1'));
     assertThat($b1->getValue(), is('Button 1'));
+    assertThat($b1->getLabel(), is('Button 1'));
     assertThat($b1->getFormAction(), is('?cmd=1'));
 
     $b2 = getFormSet($html)->getButtonByName('b2');
     assertThat($b2->getName(), is('b2'));
     assertThat($b2->getValue(), is(''));
+    assertThat($b2->getLabel(), is('Button 2'));
     assertThat($b2->getFormAction(), is('?cmd=2'));
 }
 
@@ -96,10 +98,15 @@ function buildsTextArea() {
 }
 
 function handlesMultipleForms() {
-    $html = '<form><input name="t1"></form>
-             <form><input name="t2"></form>';
+    $html = '<form>
+                 <input name="t1" type="radio">
+                 <input name="t1" type="radio">
+             </form>
+             <form>
+                 <input name="t2">
+             </form>';
 
-    $field1 = getFormSet($html)->getTextFieldByName('t1');
+    $field1 = getFormSet($html)->getRadioByName('t1');
     $field2 = getFormSet($html)->getTextFieldByName('t2');
 
     assertThat($field1->getName(), is('t1'));
