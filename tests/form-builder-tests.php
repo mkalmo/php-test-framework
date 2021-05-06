@@ -35,7 +35,7 @@ function buildsCheckboxes() {
 function buildsSelect() {
     $html = "<form>
              <select name='s1'>
-             <OPTION value> \n Value 1 \n </OPTION>
+             <option>\n Value 1 \n</option>
              <option selected value='v2'> \n Value 2 \n </option>
              <option value='v3'> \n Value 3 \n </option>
              </select>
@@ -51,6 +51,38 @@ function buildsSelect() {
     assertThat($select->hasOptionWithLabel('Value 4'), is(false));
 
     assertThat($select->getValue(), is('v2'));
+}
+
+function buildsSelectOddCases() {
+    $html = "<form>
+             <select name='s1'>
+             <OPTION value> \n Value 1 \n </OPTION>
+             <option value='v2'> \n Value 2 \n </option>
+             <option VALUE='v3'>Value 3</option>
+             <option> \n Value 4 \n </option>
+             </select>
+             </form>";
+
+    $select = getFormSet($html)->getSelectByName('s1');
+
+    assertThat($select->getName(), is('s1'));
+
+    assertThat($select->hasOptionWithLabel('Value 1'), is(true));
+    assertThat($select->hasOptionWithLabel('Value 2'), is(true));
+    assertThat($select->hasOptionWithLabel('Value 3'), is(true));
+    assertThat($select->hasOptionWithLabel('Value 6'), is(false));
+
+    $select->selectOptionWithText('Value 1');
+    assertThat($select->getValue(), is('Value 1'));
+
+    $select->selectOptionWithText('Value 2');
+    assertThat($select->getValue(), is('v2'));
+
+    $select->selectOptionWithText('Value 3');
+    assertThat($select->getValue(), is('v3'));
+
+    $select->selectOptionWithText('Value 4');
+    assertThat($select->getValue(), is('Value 4'));
 }
 
 function buildsButtons() {
