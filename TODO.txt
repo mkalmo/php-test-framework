@@ -12,3 +12,5 @@ Stack trace:
 option value when no value attribute
 https://html.spec.whatwg.org/multipage/form-elements.html#dom-option-text
 https://html.spec.whatwg.org/multipage/form-elements.html#the-option-element
+
+multiselect default value.
