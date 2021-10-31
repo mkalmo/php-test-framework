@@ -2,40 +2,60 @@
 
 namespace stf\browser;
 
-use \SimpleUserAgent;
 use \SimpleGetEncoding;
 use \SimplePostEncoding;
 use \SimpleUrl;
+use \SimpleCookieJar;
+use \SimpleHttpRequest;
+use \SimpleRoute;
 use stf\FrameworkException;
 
 class HttpClient {
 
+    private SimpleCookieJar $cookieJar;
+
+    public function __construct() {
+        $this->cookieJar = new SimpleCookieJar();
+    }
+
     function execute(HttpRequest $request) : HttpResponse {
 
-        $url = $request->getFullUrl()->asString();
+        $encoding = $request->isPostMethod()
+            ? new SimplePostEncoding()
+            : new SimpleGetEncoding();
 
-        $agent = new SimpleUserAgent();
-
-        $encoding = $request->isPostMethod() ? new SimplePostEncoding() : new SimpleGetEncoding();
-
-        foreach ($request->getParameters() as $key => $value) {
-            $encoding->add($key, $value);
+        if ($request->isPostMethod()) {
+            foreach ($request->getParameters() as $key => $value) {
+                $encoding->add($key, $value);
+            }
         }
 
-        $response = $agent->fetchResponse(new SimpleUrl($url), $encoding);
+        $url = $request->getFullUrl()->asString();
+        $simpleHttpRequest = new SimpleHttpRequest(
+            new SimpleRoute(new SimpleUrl($url)), $encoding);
 
-        $headers = new HttpHeaders(
-            $response->getHeaders()->getResponseCode(),
-            $response->getHeaders()->getLocation() ?: null) ;
+        $simpleHttpRequest->readCookiesFromJar($this->cookieJar, new SimpleUrl($url));
+
+        $response = $simpleHttpRequest->fetch(2); // 2 seconds
 
         if ($response->isError()) {
             throw new FrameworkException($response->getErrorCode(),
                 $response->getError());
         }
 
+        $response->getHeaders()->writeCookiesToJar(
+            $this->cookieJar, new SimpleUrl($url));
+
+        $headers = new HttpHeaders(
+            $response->getHeaders()->getResponseCode(),
+            $response->getHeaders()->getLocation() ?: null);
+
         return new HttpResponse($headers, $response->getContent());
     }
 
+    public function deleteCookie(string $cookieName) {
+        $this->cookieJar->deleteCookie($cookieName);
+    }
 }
 
 

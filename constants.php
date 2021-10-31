@@ -8,11 +8,13 @@ const ERROR_C03 = 'C03'; // string does not contain substring
 const ERROR_C04 = 'C04'; // contains substring but should not
 const ERROR_C05 = 'C05'; // does not contain substring once
 const ERROR_C06 = 'C06'; // does not contain discounting order
+const ERROR_C07 = 'C07'; // does not match any option
 
 const ERROR_D01 = 'D01'; // wrong page id
 
 const ERROR_N01 = 'N01'; // Error reading socket
 const ERROR_N02 = 'N02'; // bad response code
+const ERROR_N03 = 'N03'; // Timeout / nothing fetched
 
 const ERROR_H01 = 'H01'; // Parse exception
 const ERROR_H02 = 'H02'; // bad characters in url
@@ -29,7 +31,7 @@ const ERROR_W07 = 'W07'; // no form on page
 const ERROR_W08 = 'W08'; // no element with id on page
 const ERROR_W09 = 'W09'; // element with id should not be on the page
 const ERROR_W11 = 'W11'; // radio does not have this option
-const ERROR_W12 = 'W12'; // field is not radio
+const ERROR_W12 = 'W12'; // select does not have this option
 const ERROR_W13 = 'W13'; // no text field with name
 const ERROR_W14 = 'W14'; // no radio with name
 const ERROR_W15 = 'W15'; // no checkbox with name
@@ -37,4 +39,4 @@ const ERROR_W16 = 'W16'; // no select with name
 const ERROR_W18 = 'W18'; // field should not exist
 const ERROR_W19 = 'W19'; // button should not exist
 const ERROR_W20 = 'W20'; // not front controller link
-
+const ERROR_W21 = 'W21'; // should not print any output

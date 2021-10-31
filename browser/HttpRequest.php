@@ -7,7 +7,7 @@ class HttpRequest {
     private Url $baseUrl;
     private string $subPath;
     private string $method;
-    private array $getParams = [];
+    private array $parameters = [];
 
     public function __construct(
         Url $baseUrl, string $subPath, string $method) {
@@ -22,16 +22,24 @@ class HttpRequest {
     }
 
     public function addParameter(string $name, string $value) {
-        $this->getParams[$name] = $value;
+        $this->parameters[$name] = $value;
     }
 
     public function getParameters() : array {
-        return $this->getParams;
+        return $this->parameters;
     }
 
     public function getFullUrl() : Url {
-        return $this->baseUrl->navigateTo($this->subPath);
+        $url = $this->baseUrl->navigateTo($this->subPath);
+
+        if ($this->isPostMethod()) {
+            return $url;
+        }
+
+        foreach ($this->parameters as $key => $value) {
+            $url->addRequestParameter($key, urlencode($value));
+        }
+
+        return $url;
     }
 }
-
-

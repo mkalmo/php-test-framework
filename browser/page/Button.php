@@ -6,10 +6,14 @@ class Button extends AbstractInput {
 
     private string $formAction;
     private string $value;
+    private string $label;
 
-    public function __construct(string $name, string $value, string $formAction) {
+    public function __construct(
+        string $name, string $value, string $label, string $formAction) {
+
         parent::__construct($name);
         $this->value = $value;
+        $this->label = $label;
         $this->formAction = $formAction;
     }
 
@@ -20,6 +24,10 @@ class Button extends AbstractInput {
 
     public function getValue(): string {
         return $this->value;
+    }
+
+    public function getLabel(): string {
+        return $this->label;
     }
 
     public function getFormAction(): string {

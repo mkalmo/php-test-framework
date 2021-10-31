@@ -37,7 +37,7 @@ class HtmlLexer {
         $this->consume();
     }
 
-    public function tokenize() {
+    public function tokenize() : array {
 
         while ($this->c !== self::EOF_CHAR) {
             if ($this->isMatch('<!--')) {

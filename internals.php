@@ -3,7 +3,6 @@
 namespace stf;
 
 use \Exception;
-use stf\browser\HttpClient;
 use stf\browser\HttpRequest;
 use stf\browser\HttpResponse;
 use stf\browser\RequestBuilder;
@@ -62,7 +61,7 @@ function executeRequestWithRedirects(HttpRequest $request) {
 
     $response = executeRequest($request);
 
-    $count = 3;
+    $count = getGlobals()->maxRedirectCount;
     while ($response->isRedirect() && $count-- > 0) {
 
         $request = new HttpRequest($request->getFullUrl(),
@@ -71,21 +70,25 @@ function executeRequestWithRedirects(HttpRequest $request) {
         $response = executeRequest($request);
     }
 
-    updatePage($response);
+    updateGlobals($response);
 }
 
-function updatePage(HttpResponse $response) : void {
-    $pageParser = new PageParser($response->getContents());
+function updateGlobals(HttpResponse $response) : void {
+    $globals = getGlobals();
 
     assertValidResponse($response->getResponseCode());
+
+    $globals->responseCode = $response->getResponseCode();
+    $globals->responseContents = $response->getContents();
+
+    $pageParser = new PageParser($response->getContents());
+
     assertValidHtml($pageParser);
 
     $nodeTree = new NodeTree($pageParser->getNodeTree());
 
     $page = (new PageBuilder($nodeTree, $response->getContents()))->getPage();
 
-    $globals = getGlobals();
-    $globals->responseCode = $response->getResponseCode();
     $globals->page = $page;
 }
 
@@ -97,15 +100,20 @@ function executeRequest(HttpRequest $request) : HttpResponse {
     assertValidUrl($url);
 
     try {
-        $response = (new HttpClient())->execute($request);
+        $response = $globals->httpClient->execute($request);
     } catch (FrameworkException $e) {
         throw $e;
     } catch (Exception $e) {
         throw new FrameworkException(ERROR_G01, $e->getMessage());
     } finally {
         if ($globals->logRequests) {
-            printf("%s (%s)\n", $url,
-                $response->getResponseCode() ?? 'no response code');
+            $responseCode = isset($response)
+                ? $response->getResponseCode()
+                : 'no response code';
+
+            $method = $request->isPostMethod() ? "POST" : 'GET';
+
+            printf("%s %s (%s)\n", $method, $url, $responseCode);
         }
     }
 
@@ -132,7 +140,7 @@ function assertValidHtml(PageParser $pageParser): void {
         return;
     }
 
-    $message = sprintf("Application responded with incorrect HTML\n");
+    $message = "Application responded with incorrect HTML\n";
     $message .= sprintf("%s at line %s, column %s\n\n",
         $result->getMessage(), $result->getLine(), $result->getColumn());
     $message .= sprintf("%s\n", $result->getSource());
@@ -141,7 +149,7 @@ function assertValidHtml(PageParser $pageParser): void {
 }
 
 function assertValidUrl(string $url) : void {
-    $invalidCharsRegex = "/[^0-9A-Za-z:\/?#\[\]@!$&\'()*+,;=\-._~%]/";
+    $invalidCharsRegex = "/[^0-9A-Za-z:\/?#\[\]@!$&'()*+,;=\-._~%]/";
 
     if (!preg_match($invalidCharsRegex, $url, $matches)) {
         return;

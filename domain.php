@@ -60,6 +60,25 @@ function assertCorrectPageId($expectedPageId) {
     }
 }
 
+function assertContains(array $allPosts, Post $post) {
+    foreach ($allPosts as $each) {
+        if ($each->title === $post->title && $each->text === $post->text) {
+            return;
+        }
+    }
+
+    throw new stf\FrameworkException(ERROR_C01, "Did not find saved post");
+}
+
+function assertDoesNotContainPostWithTitle(array $allPosts, string $title) {
+    foreach ($allPosts as $each) {
+        if ($each->title === $title) {
+            throw new stf\FrameworkException(ERROR_C01,
+                sprintf("Found post with title '%s'", $title));
+        }
+    }
+}
+
 class Author {
     public string $firstName;
     public string $lastName;
@@ -90,4 +109,20 @@ function getSampleBook() : Book {
     $book->grade = 5;
     $book->isRead = true;
     return $book;
+}
+
+function insertSampleAuthor() : string {
+
+    gotoLandingPage();
+
+    clickAuthorFormLink();
+
+    $author = getSampleAuthor();
+
+    setTextFieldValue('firstName', $author->firstName);
+    setTextFieldValue('lastName', $author->lastName);
+
+    clickAuthorFormSubmitButton();
+
+    return $author->firstName . ' ' . $author->lastName;
 }

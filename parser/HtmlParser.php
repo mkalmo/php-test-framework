@@ -4,12 +4,12 @@ namespace tplLib;
 
 class HtmlParser {
 
-    private $p;
-    private $input;
+    private int $p;
+    private array $input;
     private $actions;
-    private $consumedPos = 0;
+    private int $consumedPos = 0;
 
-    public function __construct($input, $actions = null) {
+    public function __construct(array $input, $actions = null) {
         $this->input = $input;
         $this->actions = $actions !== null ? $actions : new NopActions();
         $this->p = 0;
@@ -19,25 +19,20 @@ class HtmlParser {
         $this->htmlDocument();
     }
 
-    public function parseFragment() {
-        $this->htmlContent();
-    }
+    private function htmlDocument() : void {
 
-    private function htmlDocument() {
+        // possible debugging stuff
+        $this->htmlContent();
+
         // htmlDocument
         //    : SEA_WS? xml? SEA_WS? dtd? SEA_WS? htmlElements*
 
-        $this->optionalElement(HtmlLexer::SEA_WS);
         $this->optionalElement(HtmlLexer::DTD);
         $this->optionalElement(HtmlLexer::XML_DECLARATION);
-        $this->optionalElement(HtmlLexer::SEA_WS);
-        $this->optionalElement(HtmlLexer::HTML_TEXT);
 
         while ($this->isHtmlElements()) {
             $this->htmlElements();
         }
-
-        $this->optionalElement(HtmlLexer::HTML_TEXT);
     }
 
     private function htmlElements() {
@@ -130,7 +125,7 @@ class HtmlParser {
         $this->match(HtmlLexer::TAG_SLASH);
 
         $actualName = $this->ltt() === HtmlLexer::TAG_NAME
-            ? $actualName = $this->lt()->text
+            ? $this->lt()->text
             : null;
 
         $this->match(HtmlLexer::TAG_NAME);
@@ -151,7 +146,7 @@ class HtmlParser {
             $this->consume();
         } else {
             $message = sprintf(
-                'expected: %s found: %s', $type, $this->ltt());
+                'expected: %s but found: %s', $type, $this->ltt());
 
             throw new ParseException($message, $this->consumedPos);
         }
@@ -163,7 +158,7 @@ class HtmlParser {
         return $p < count($this->input) ? $this->input[$p] : null;
     }
 
-    private function ltt($lookahead = 1) {
+    private function ltt($lookahead = 1) : string {
         $token = $this->lt($lookahead);
 
         return $token === null ? 'EOF_TYPE' : $token->type;
@@ -176,12 +171,12 @@ class HtmlParser {
         $this->optionalElement(HtmlLexer::SEA_WS);
     }
 
-    private function isHtmlMisc() {
+    private function isHtmlMisc() : bool {
         return $this->ltt() === HtmlLexer::HTML_COMMENT
             || $this->ltt() === HtmlLexer::SEA_WS;
     }
 
-    private function htmlAttribute() {
+    private function htmlAttribute() : array {
         // htmlAttribute
         //    : htmlAttributeName TAG_EQUALS htmlAttributeValue
         //    | htmlAttributeName
@@ -227,19 +222,19 @@ class HtmlParser {
         $this->optionalElement(HtmlLexer::HTML_TEXT);
     }
 
-    private function isHtmlChardata() {
+    private function isHtmlChardata() : bool {
         return $this->ltt() === HtmlLexer::HTML_TEXT
             || $this->ltt() === HtmlLexer::SEA_WS;
     }
 
-    private function isVoidTag($name) {
+    private function isVoidTag($name) : bool {
         $voidTags = 'area base br col embed hr img input '
                   . 'keygen link meta param source track wbr';
 
         return in_array($name, explode(' ', $voidTags));
     }
 
-    private function isHtmlElement() {
+    private function isHtmlElement() : bool {
         if ($this->ltt() === HtmlLexer::TAG_OPEN
             && $this->ltt(2) === HtmlLexer::TAG_NAME) {
 
@@ -249,7 +244,7 @@ class HtmlParser {
         return $this->ltt() === HtmlLexer::SCRIPT;
     }
 
-    private function isHtmlElements() {
+    private function isHtmlElements() : bool {
         return $this->isHtmlMisc() || $this->isHtmlElement();
     }
 

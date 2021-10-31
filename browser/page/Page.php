@@ -53,7 +53,7 @@ class Page {
 
     public function getLinkByText(string $text) : ?Link {
         return array_values(array_filter($this->links, function ($link) use ($text) {
-            return $link->getText() === $text;
+            return trim($link->getText()) === $text;
         }))[0] ?? null;
     }
 

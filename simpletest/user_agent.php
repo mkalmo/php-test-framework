@@ -29,8 +29,8 @@ if (! defined('DEFAULT_CONNECTION_TIMEOUT')) {
  */
 class SimpleUserAgent
 {
-    private $cookie_jar;
-    private $cookies_enabled = true;
+    public $cookie_jar;
+    public $cookies_enabled = true;
     private $authenticator;
     private $max_redirects = DEFAULT_MAX_REDIRECTS;
     private $proxy = false;

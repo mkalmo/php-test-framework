@@ -217,7 +217,7 @@ class SimpleHttpRequest
      *    These include proxy information, URL, cookies, headers,
      *    request method and choice of encoding.
      *    @param SimpleRoute $route              Request route.
-     *    @param SimpleFormEncoding $encoding    Content to send with
+     *    @param SimpleEntityEncoding $encoding    Content to send with
      *                                           request.
      *    @access public
      */
@@ -552,7 +552,8 @@ class SimpleHttpResponse extends SimpleStickyError
     protected function parse($raw)
     {
         if (! $raw) {
-            $this->setError('Nothing fetched');
+            $this->setError('Timeout 2 seconds');
+            $this->setErrorCode(ERROR_N03);
             $this->headers = new SimpleHttpHeaders('');
         } elseif ('file' == $this->url->getScheme()) {
             $this->headers = new SimpleHttpHeaders('');

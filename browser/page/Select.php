@@ -12,13 +12,13 @@ class Select extends AbstractInput {
         parent::__construct($name);
     }
 
-    public function addOption(string $value, string $label) {
-        $this->options[] = [$value, $label, false];
+    public function addOption(?string $value, string $text) {
+        $this->options[] = new Option($text, $value);
     }
 
-    public function hasOptionWithLabel(string $label) : bool {
+    public function hasOptionWithLabel(string $text) : bool {
         foreach ($this->options as $each) {
-            if ($each[1] === $label) {
+            if ($each->getText() === $text) {
                 return true;
             }
         }
@@ -27,9 +27,9 @@ class Select extends AbstractInput {
     }
 
     public function selectOptionByValue(string $value) {
-        foreach ($this->options as &$each) {
-            if ($each[0] === $value) {
-                $each[2] = true;
+        foreach ($this->options as $each) {
+            if ($each->getValue() === $value) {
+                $each->select();
                 return;
             }
         }
@@ -38,19 +38,18 @@ class Select extends AbstractInput {
     }
 
     public function selectOptionWithText(string $text) {
-        $found = false;
-        foreach ($this->options as &$each) {
-            if ($each[1] === $text) {
-                $each[2] = true;
-                $found = true;
-            } else {
-                $each[2] = false;
+        foreach ($this->options as $each) {
+            $each->unSelect();
+        }
+
+        foreach ($this->options as $each) {
+            if ($each->getText() === $text) {
+                $each->select();
+                return;
             }
         }
 
-        if (!$found) {
-            throw new RuntimeException("unknown option text: " . $text);
-        }
+        throw new RuntimeException("unknown option text: " . $text);
     }
 
     public function getSelectedOptionText() : string {
@@ -58,19 +57,18 @@ class Select extends AbstractInput {
             return '';
         }
 
-        $text = $this->options[0][1];
         foreach ($this->options as $each) {
-            if ($each[2]) {
-                $text = $each[1];
+            if ($each->isSelected()) {
+                return $each->getText();
             }
         }
 
-        return $text;
+        return $this->options[0]->getText();
     }
 
     public function __toString() : string {
         $values = array_map(function ($each) {
-            return $each[0];
+            return $each->getValue();
         }, $this->options);
 
         return sprintf("Select: %s (%s) selected: %s\n",
@@ -83,13 +81,11 @@ class Select extends AbstractInput {
         }
 
         foreach ($this->options as $each) {
-            if ($each[2]) {
-                return $each[0];
+            if ($each->isSelected()) {
+                return $each->getValue();
             }
         }
 
-        return $this->options[0][0];
+        return $this->options[0]->getValue();
     }
 }
-
-

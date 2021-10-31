@@ -310,6 +310,14 @@ class SimpleCookieJar
         $this->cookies[$this->findFirstMatch($cookie)] = $cookie;
     }
 
+    public function deleteCookie($name) {
+        $tmp = array_filter($this->cookies, function ($cookie) use ($name) {
+            return $cookie->getName() !== $name;
+        });
+
+        $this->cookies = array_values($tmp);
+    }
+
     /**
      *    Finds a matching cookie to write over or the
      *    first empty slot if none.

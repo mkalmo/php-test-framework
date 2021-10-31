@@ -6,9 +6,9 @@ use RuntimeException;
 
 class TagNode extends AbstractNode {
 
-    protected $attributes;
-    protected $isVoidTag;
-    protected $hasSlashClose;
+    protected array $attributes;
+    protected bool $isVoidTag;
+    protected bool $hasSlashClose;
 
     public function __construct($name, $attributes) {
         parent::__construct($name);
@@ -27,20 +27,20 @@ class TagNode extends AbstractNode {
         $this->hasSlashClose = true;
     }
 
-    public function render($scope) {
+    public function render($scope) : string {
         return $this->isVoidTag
             ? $this->renderVoidTag($scope)
             : $this->renderBodyTag($scope);
     }
 
-    public function renderVoidTag($scope) {
+    public function renderVoidTag($scope) : string {
         $close = $this->hasSlashClose ? '/' : '';
 
         return sprintf('<%s%s%s>',
             $this->name, $this->attributeString($scope), $close);
     }
 
-    public function renderBodyTag($scope) {
+    public function renderBodyTag($scope) : string {
 
         $contents = $this->renderContents($scope);
 
@@ -52,7 +52,7 @@ class TagNode extends AbstractNode {
             $this->name, $this->attributeString($scope), $contents);
     }
 
-    private function renderContents($scope) {
+    private function renderContents($scope) : string {
         $contents = '';
         foreach ($this->children as $child) {
             $contents .= $child->render($scope);
@@ -63,7 +63,7 @@ class TagNode extends AbstractNode {
             : $contents;
     }
 
-    protected function attributeString($scope) {
+    protected function attributeString($scope) : string {
         $result = '';
 
         if ($this->hasAttribute('tpl-checked')) {
@@ -122,7 +122,7 @@ class TagNode extends AbstractNode {
 
     public function getAttributeValue($name) : ?string {
         foreach ($this->attributes as $key => $value) {
-            if ($key === $name) {
+            if (strtolower($key) === strtolower($name) && $value !== null) {
                 return $this->stripQuotes($value);
             }
         }
@@ -132,7 +132,7 @@ class TagNode extends AbstractNode {
 
     public function hasAttribute($name) : bool {
         foreach ($this->attributes as $key => $value) {
-            if ($key === $name) {
+            if (strtolower($key) === strtolower($name)) {
                 return true;
             }
         }
