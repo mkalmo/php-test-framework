@@ -4,9 +4,6 @@ require_once '../public-api.php';
 
 const BASE_URL = 'http://localhost:8080';
 
-setBaseUrl(BASE_URL);
-//logRequests(true);
-
 function submitForm() {
     navigateTo('/form.html');
 
@@ -19,6 +16,11 @@ function submitForm() {
 //    printPageSource();
 }
 
+setBaseUrl(BASE_URL);
+setLogRequests(true);
+setLogPostParameters(true);
+setPrintStackTrace(false);
+setPrintPageSourceOnError(false);
 
 
 stf\runTests();
