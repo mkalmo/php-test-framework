@@ -6,7 +6,7 @@ use \RuntimeException;
 
 class Url {
 
-    private ?string $host;
+    private string $host;
     private Path $path;
     private string $queryString;
 
@@ -23,10 +23,14 @@ class Url {
     }
 
     public function asString() : string {
-        $result = $this->host . $this->path->asAbsolute()->asString();
+        return $this->fromParts($this->host, $this->path, $this->queryString);
+    }
 
-        return $this->queryString
-            ? $result . '?' . $this->queryString
+    private function fromParts(string $host, Path $path, string $queryString) : string {
+        $result = $host . $path->asAbsolute()->asString();
+
+        return $queryString
+            ? $result . '?' . $queryString
             : $result;
     }
 
@@ -34,11 +38,20 @@ class Url {
         return !empty($this->getHost($url));
     }
 
+    private function isParametersOnly(?string $url) : bool {
+        return substr(trim($url), 0, 1) === '?';
+    }
+
     public function navigateTo(?string $destination) : Url {
+        $destination = trim($destination);
+
         if (empty($destination)) {
             return $this->normalize();
         } else if ($this->isAbsolute($destination)) {
             return new Url($destination);
+        } else if ($this->isParametersOnly($destination)) {
+            return new Url($this->fromParts(
+                $this->host, $this->path, substr($destination, 1)));
         }
 
         $path = $this->path->removeFilePart();

@@ -66,6 +66,7 @@ function fromFile() {
     assertThat(url('http://lh/a')->navigateTo('.')->asString(), is('http://lh'));
     assertThat(url('http://lh/a')->navigateTo('./')->asString(), is('http://lh'));
     assertThat(url('http://lh/a')->navigateTo('b')->asString(), is('http://lh/b'));
+    assertThat(url('http://lh/a')->navigateTo('?a=1')->asString(), is('http://lh/a?a=1'));
 }
 
 function fromDir() {
