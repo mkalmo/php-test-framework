@@ -3,12 +3,6 @@ Error when form contains inputs with the same name.
 
 ---------------
 
-RuntimeException: unknown option text: f1c c043 1f52b 8b1 in /tests/vendor/php-test-framework/browser/page/Select.php:52
-Stack trace:
-#0 /tests/vendor/php-test-framework/public-api.php(321): stf\browser\page\Select->selectOptionWithText()
-
----------------
-
 option value when no value attribute
 https://html.spec.whatwg.org/multipage/form-elements.html#dom-option-text
 https://html.spec.whatwg.org/multipage/form-elements.html#the-option-element
