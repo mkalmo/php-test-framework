@@ -12,8 +12,14 @@ class Select extends AbstractInput {
         parent::__construct($name);
     }
 
-    public function addOption(?string $value, string $text) {
-        $this->options[] = new Option($text, $value);
+    public function addOption(?string $value, string $text, bool $selected) {
+        $option = new Option($text, $value);
+
+        if ($selected) {
+            $option->select();
+        }
+
+        $this->options[] = $option;
     }
 
     public function hasOptionWithLabel(string $text) : bool {
@@ -24,17 +30,6 @@ class Select extends AbstractInput {
         }
 
         return false;
-    }
-
-    public function selectOptionByValue(string $value) {
-        foreach ($this->options as $each) {
-            if ($each->getValue() === $value) {
-                $each->select();
-                return;
-            }
-        }
-
-        throw new RuntimeException("unknown option value: " . $value);
     }
 
     public function selectOptionWithText(string $text) {

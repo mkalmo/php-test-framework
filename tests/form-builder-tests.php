@@ -60,6 +60,7 @@ function buildsSelectOddCases() {
              <option value='v2'> \n Value 2 \n </option>
              <option VALUE='v3'>Value 3</option>
              <option> \n Value 4 \n </option>
+             <option selected>Value 5</option>
              </select>
              </form>";
 
@@ -71,6 +72,8 @@ function buildsSelectOddCases() {
     assertThat($select->hasOptionWithLabel('Value 2'), is(true));
     assertThat($select->hasOptionWithLabel('Value 3'), is(true));
     assertThat($select->hasOptionWithLabel('Value 6'), is(false));
+
+    assertThat($select->getValue(), is('Value 5'));
 
     $select->selectOptionWithText('Value 1');
     assertThat($select->getValue(), is('Value 1'));

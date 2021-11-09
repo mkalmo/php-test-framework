@@ -28,9 +28,9 @@ function selectTest() {
 
     $select = new Select('s1');
 
-    $select->addOption("v1", "Value 1");
-    $select->addOption("v2", "Value 2");
-    $select->addOption("v3", "Value 3");
+    $select->addOption("v1", "Value 1", false);
+    $select->addOption("v2", "Value 2", false);
+    $select->addOption("v3", "Value 3", false);
 
     assertThat($select->getValue(), is('v1'));
 
