@@ -112,7 +112,7 @@ class FormBuilder {
         $options = $this->nodeTree->findChildNodesByTagNames($element, ['option']);
 
         foreach ($options as $option) {
-            $value = $option->getAttributeValue('value');
+            $value = $option->getAttributeValue('value') ?? '';
             $label = implode('', $this->nodeTree->getTextLines($option));
             $select->addOption($value, trim($label));
 
