@@ -20,8 +20,8 @@ function asString() {
     assertThat(path('a')->asString(), is('a'));
     assertThat(path('/')->asString(), is('/'));
     assertThat(path('/a')->asString(), is('/a'));
-    assertThat(path('/a/')->asString(), is('/a'));
-    assertThat(path('a/')->asString(), is('a'));
+    assertThat(path('/a/')->asString(), is('/a/'));
+    assertThat(path('a/')->asString(), is('a/'));
 }
 
 function asAbsolute() {
@@ -43,6 +43,15 @@ function cd() {
 
     assertThat(path('a')->cd(path('b'))->asString(), is('a/b'));
     assertThat(path('/a')->cd(path('b'))->asString(), is('/a/b'));
+
+    assertThat(path('')->cd(path('.'))->asString(), is(''));
+    assertThat(path('/')->cd(path('.'))->asString(), is('/'));
+    assertThat(path('a')->cd(path('.'))->asString(), is('a'));
+
+    assertThat(path('a/')->cd(path('.'))->asString(), is('a/'));
+    assertThat(path('a/')->cd(path('./'))->asString(), is('a/'));
+    assertThat(path('/a')->cd(path('..'))->asString(), is('/'));
+    assertThat(path('/a')->cd(path('../'))->asString(), is('/'));
 }
 
 #Helpers

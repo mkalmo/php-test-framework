@@ -28,14 +28,20 @@ class Path2 {
 
     public function cd(Path2 $other) : Path2 {
         if ($other->isAbsolute()) {
-            return $this->normalize($other);
+            return self::normalize($other);
         }
 
         $result = new Path2('');
         $result->isAbsolute = $this->isAbsolute;
+        if ($other->endsWithSlash) {
+            $result->endsWithSlash = true;
+        } else if (self::normalize($other)->isEmpty()) {
+            $result->endsWithSlash = $this->endsWithSlash;
+        }
+
         $result->parts = array_merge($this->parts, $other->parts);
 
-        return $this->normalize($result);
+        return self::normalize($result);
     }
 
     private static function normalize(Path2 $path) : Path2 {
@@ -52,7 +58,12 @@ class Path2 {
 
         $result = new Path2('');
         $result->isAbsolute = $path->isAbsolute;
+        $result->endsWithSlash = $path->endsWithSlash;
         $result->parts = $newParts;
+        if ($path->endsWithSlash && empty($result->parts)) {
+            $result->isAbsolute = true;
+        }
+
         return $result;
     }
 
@@ -70,12 +81,12 @@ class Path2 {
     }
 
     public function isRoot() : bool {
-        return $this->isAbsolute()
+        return ($this->isAbsolute || $this->endsWithSlash)
             && empty($this->parts);
     }
 
     public function isEmpty() : bool {
-        return empty($this->parts);
+        return empty($this->parts) && !$this->isRoot();
     }
 
 }

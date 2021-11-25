@@ -31,12 +31,15 @@ class Url2 {
 
     private function extractPath($url) : void {
         $path = parse_url($url, PHP_URL_PATH) ?? '';
+        if (preg_match('/\.$/', $path)) {
+            $path .= '/';
+        }
 
         $pathRegex = '/(.*\/)?(.*)/';
         preg_match($pathRegex, $path, $matches);
 
         $this->path = new Path2($matches[1]);
-        $this->file = $matches[2] === '.' ? '' : $matches[2];
+        $this->file = $matches[2];
     }
 
     private function extractQueryString($url) : void {
@@ -63,73 +66,36 @@ class Url2 {
              . $this->queryString;
     }
 
-    private function fromParts(string $host, Path2 $path, string $queryString) : string {
-        $path = $path->isEmpty() && empty($queryString)
-            ? ''
-            : $path->asAbsolute()->asString();
-
-        return $host . $path . ($queryString ? '?' : '') . $queryString;
-    }
-
-    private function withHost() : bool {
+    private function hasHostPart() : bool {
         return $this->host !== '';
     }
 
     private function isEmpty() : bool {
         return $this->host === ''
             && $this->path->isEmpty()
+            && $this->file === ''
             && $this->queryString === '';
-    }
-
-    private function isParametersOnly(?string $url) : bool {
-        return substr(trim($url), 0, 1) === '?';
     }
 
     public function navigateTo(string $destination) : Url2 {
         $dest = new Url2($destination);
 
-        if ($dest->withHost()) {
+        if ($dest->hasHostPart()) {
             return new Url2($destination);
         } else if ($dest->isEmpty()) {
             return $this;
         }
 
-
-//        else if ($this->isParametersOnly($destination)) {
-//            return new Url2($this->fromParts(
-//                $this->host, $this->path, substr($destination, 1)));
-//        }
-
-        // $path = $this->path->removeFilePart();
-
-        // $newPath = $path->extend(new Path2($destination));
-
-        //$newUrl = new Url2($this->host . $newPath->asAbsolute()->asString());
-
-        //return $newUrl->normalize();
-
         $newUrl = new Url2('');
         $newUrl->host = $this->host;
         $newUrl->path = $this->path->cd($dest->path);
-        $newUrl->file = $dest->file ?: $this->file;
+
+        $newUrl->file = ($dest->file || !$dest->path->isEmpty())
+            ? $dest->file : $this->file;
+
         $newUrl->queryString = $dest->queryString;
 
         return $newUrl;
-    }
-
-    public function normalize() : Url2 {
-
-//        $newUrl = new Url2($this->host);
-//
-//        $newUrl->path = $this->path->normalize();
-//
-//        if ($newUrl->path->isRoot() && empty($this->getQueryString())) {
-//            $newUrl->path = new Path('');
-//        }
-//
-//        $newUrl->queryString = $this->queryString;
-
-        return '';
     }
 
     public function getQueryString() : string {
