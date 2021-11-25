@@ -2,8 +2,6 @@
 
 namespace stf\browser;
 
-use RuntimeException;
-
 class Path2 {
 
     private array $parts;
@@ -33,18 +31,15 @@ class Path2 {
 
         $result = new Path2('');
         $result->isAbsolute = $this->isAbsolute;
-        if ($other->endsWithSlash) {
-            $result->endsWithSlash = true;
-        } else if (self::normalize($other)->isEmpty()) {
-            $result->endsWithSlash = $this->endsWithSlash;
-        }
-
         $result->parts = array_merge($this->parts, $other->parts);
+        $result->endsWithSlash = self::normalize($other)->isEmpty()
+            ? $this->endsWithSlash
+            : $other->endsWithSlash;
 
         return self::normalize($result);
     }
 
-    private static function normalize(Path2 $path) : Path2 {
+    public static function normalize(Path2 $path) : Path2 {
         $newParts = [];
         foreach ($path->parts as $part) {
             if ($part === '.') {
@@ -57,27 +52,11 @@ class Path2 {
         }
 
         $result = new Path2('');
-        $result->isAbsolute = $path->isAbsolute;
         $result->endsWithSlash = $path->endsWithSlash;
+        $result->isAbsolute = $path->isAbsolute || $path->isRoot();
         $result->parts = $newParts;
-        if ($path->endsWithSlash && empty($result->parts)) {
-            $result->isAbsolute = true;
-        }
 
         return $result;
-    }
-
-    private function clone() : Path2 {
-        $path = new Path2('');
-        $path->isAbsolute = true;
-        $path->parts = $this->parts;
-        return $path;
-    }
-
-    public function asAbsolute() : Path2 {
-        $path = $this->clone();
-        $path->isAbsolute = true;
-        return $path;
     }
 
     public function isRoot() : bool {

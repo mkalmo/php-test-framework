@@ -24,12 +24,12 @@ function asString() {
     assertThat(path('a/')->asString(), is('a/'));
 }
 
-function asAbsolute() {
-    assertThat(path('')->asAbsolute()->asString(), is('/'));
-
-    assertThat(path('a/')->asAbsolute()->asString(), is('/a'));
-    assertThat(path('/a')->asAbsolute()->asString(), is('/a'));
-    assertThat(path('/')->asAbsolute()->asString(), is('/'));
+function normalize() {
+    assertThat(Path2::normalize(path(''))->asString(), is(''));
+    assertThat(Path2::normalize(path('.'))->asString(), is(''));
+    assertThat(Path2::normalize(path('./'))->asString(), is(''));
+    assertThat(Path2::normalize(path('..'))->asString(), is(''));
+    assertThat(Path2::normalize(path('../'))->asString(), is(''));
 }
 
 function cd() {
