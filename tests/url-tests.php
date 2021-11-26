@@ -4,15 +4,33 @@ require_once '../public-api.php';
 
 use stf\browser\Url;
 
+function parseAndConstruct() {
+    $urls = [
+        '/a',
+        '/a/a',
+        '/a/',
+        'a',
+        'a/a',
+        'http://db.lh/b.php',
+        '?b.php',
+        'b.php?a=1#var=1'
+    ];
+
+    foreach ($urls as $each) {
+        $url = url($each);
+        assertThat($url->asString(), is($each));
+    }
+}
+
 function requestParameters() {
     $url = url('http://db.lh/a.php?a=1');
 
     assertThat($url->asString(), is('http://db.lh/a.php?a=1'));
-    assertThat($url->getQueryString(), is('a=1'));
+    assertThat($url->getQueryString(), is('?a=1'));
 
     $url->addRequestParameter('b','2');
 
-    assertThat($url->getQueryString(), is('a=1&b=2'));
+    assertThat($url->getQueryString(), is('?a=1&b=2'));
 
     $url = url('http://db.lh/a.php');
 
@@ -22,17 +40,13 @@ function requestParameters() {
     $url->addRequestParameter('b','2');
 
     assertThat($url->asString(), is('http://db.lh/a.php?b=2'));
-    assertThat($url->getQueryString(), is('b=2'));
+    assertThat($url->getQueryString(), is('?b=2'));
 }
 
 function asString() {
     assertThat(url('http://lh')->asString(), is('http://lh'));
 
     assertThat(url('http://db.lh')->asString(), is('http://db.lh'));
-}
-
-function handlesNull() {
-    assertThat(url('http://lh')->navigateTo(null)->asString(), is('http://lh'));
 }
 
 function hostname() {

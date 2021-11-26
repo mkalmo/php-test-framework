@@ -2,97 +2,50 @@
 
 namespace stf\browser;
 
-use RuntimeException;
-
 class Path {
 
-    private array $parts = [];
-    private bool $isAbsolute = false;
-    private bool $isDirectory = false;
+    private array $parts;
+    private bool $isAbsolute;
+    private bool $endsWithSlash;
 
-    public function __construct(?string $path) {
-        if (empty($path)) {
-            return;
-        }
-
-        $this->isAbsolute = preg_match('/^\//', $path) ? true : false;
-        $this->isDirectory = preg_match('/[.\/]$/', $path) ? true : false;
-
+    public function __construct(string $path) {
+        $this->isAbsolute = !!preg_match('/^\//', $path);
         $this->parts = array_filter(explode('/', $path));
+        $this->endsWithSlash = !!preg_match('/\/$/', $path);
     }
 
     public function isAbsolute() : bool {
         return $this->isAbsolute;
     }
 
-    public function isDirectory() : bool {
-        return $this->isDirectory;
-    }
-
     public function asString() : string {
-        $result = '';
-        if ($this->isAbsolute()) {
-            $result .= '/';
+        if ($this->isRoot()) {
+            return '/';
         }
 
-        $result .= implode('/', $this->parts);
-
-        if ($this->isDirectory() && !empty($this->parts)) {
-            $result .= '/';
-        }
-
-        return $result;
+        return ($this->isAbsolute() ? '/' : '')
+            . implode('/', $this->parts)
+            . ($this->endsWithSlash ? '/' : '');
     }
 
-    public function removeFilePart() : Path {
-        if (empty($this->parts) || $this->isDirectory) {
-            return $this;
-        }
-
-        $parts = $this->parts;
-        array_pop($parts);
-        $newPath = new Path(null);
-        $newPath->isDirectory = true;
-        $newPath->isAbsolute = $this->isAbsolute;
-        $newPath->parts = $parts;
-
-        return $newPath;
-    }
-
-    public function extend(Path $other) : Path {
+    public function cd(Path $other) : Path {
         if ($other->isAbsolute()) {
-            return $other;
+            return self::normalize($other);
         }
 
-        $result = new Path(null);
+        $result = new Path('');
         $result->isAbsolute = $this->isAbsolute;
         $result->parts = array_merge($this->parts, $other->parts);
-        $result->isDirectory = $other->isBlank()
-            ? $this->isDirectory
-            : $other->isDirectory;
+        $result->endsWithSlash = self::normalize($other)->isEmpty()
+            ? $this->endsWithSlash
+            : $other->endsWithSlash;
 
-        return $result;
+        return self::normalize($result);
     }
 
-    public function asAbsolute() : Path {
-        if ($this->isBlank()) {
-            return new Path(null);
-        }
-
-        $path = new Path(null);
-        $path->isAbsolute = true;
-        $path->isDirectory = $this->isDirectory;
-        $path->parts = $this->parts;
-        return $path;
-    }
-
-    public function normalize() : Path {
-        if (!$this->isAbsolute() && !$this->isBlank()) {
-            throw new RuntimeException("must be absolute or blank to normalize");
-        }
-
+    public static function normalize(Path $path) : Path {
         $newParts = [];
-        foreach ($this->parts as $part) {
+        foreach ($path->parts as $part) {
             if ($part === '.') {
                 continue;
             } else if ($part === '..') {
@@ -102,26 +55,25 @@ class Path {
             }
         }
 
-        $path = new Path(null);
-        $path->isAbsolute = $this->isAbsolute;
-        $path->isDirectory = $this->isDirectory;
-        $path->parts = $newParts;
-        return $path;
+        $result = new Path('');
+        $result->parts = $newParts;
+        $result->endsWithSlash = $path->endsWithSlash;
+        $result->isAbsolute = $path->isAbsolute ||
+            ($result->hasNoParts() && $path->endsWithSlash);
+
+        return $result;
+    }
+
+    private function hasNoParts() : bool {
+        return !count($this->parts);
     }
 
     public function isRoot() : bool {
-        return $this->isAbsolute()
-            && $this->isDirectory()
-            && empty($this->parts);
+        return $this->isAbsolute && $this->hasNoParts();
     }
 
-    private function isBlank() : bool {
-        return !$this->isAbsolute()
-            && !$this->isDirectory()
-            && empty($this->parts);
+    public function isEmpty() : bool {
+        return $this->hasNoParts() && !$this->isAbsolute;
     }
 
 }
-
-
-

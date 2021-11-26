@@ -2,100 +2,98 @@
 
 namespace stf\browser;
 
-use \RuntimeException;
-
 class Url {
 
     private string $host;
     private Path $path;
+    private string $file;
     private string $queryString;
 
     public function __construct(string $url) {
-        $this->host = $this->getHost($url);
-        if (empty($this->host)) {
-            throw new RuntimeException('no host part in url: ' . $url);
+        $this->extractHost($url);
+        $this->extractPath($url);
+        $this->extractQueryString($url);
+    }
+
+    private function extractHost($url) : void {
+        $scheme = parse_url($url, PHP_URL_SCHEME) ?? '';
+        $host = parse_url($url, PHP_URL_HOST) ?? '';
+        $port = parse_url($url, PHP_URL_PORT) ?? '';
+
+        $this->host = $scheme
+            . ($scheme ? '://' : '')
+            . $host
+            . ($port ? ':' : '')
+            . $port;
+    }
+
+    private function extractPath($url) : void {
+        $path = parse_url($url, PHP_URL_PATH) ?? '';
+        if (preg_match('/\.$/', $path)) {
+            $path .= '/';
         }
 
-        $parts = explode('?', $url, 2);
-        $this->queryString = $parts[1] ?? '';
+        $pathRegex = '/(.*\/)?(.*)/';
+        preg_match($pathRegex, $path, $matches);
 
-        $this->path = new Path($this->getPath($url));
+        $this->path = new Path($matches[1]);
+        $this->file = $matches[2];
+    }
+
+    private function extractQueryString($url) : void {
+        $query = parse_url($url, PHP_URL_QUERY) ?? '';
+        $fragment = parse_url($url, PHP_URL_FRAGMENT) ?? '';
+
+        $this->queryString =
+            ($query ? '?' . $query : '')
+            . ($fragment ? '#' . $fragment : '');
     }
 
     public function asString() : string {
-        return $this->fromParts($this->host, $this->path, $this->queryString);
+        if ($this->host !== ''
+            && $this->path->isRoot()
+            && $this->file === ''
+            && $this->queryString === '') {
+
+            return $this->host;
+        }
+
+        return $this->host
+            . $this->path->asString()
+            . $this->file
+            . $this->queryString;
     }
 
-    private function fromParts(string $host, Path $path, string $queryString) : string {
-        $result = $host . $path->asAbsolute()->asString();
-
-        return $queryString
-            ? $result . '?' . $queryString
-            : $result;
+    private function hasHostPart() : bool {
+        return $this->host !== '';
     }
 
-    private function isAbsolute(?string $url) : bool {
-        return !empty($this->getHost($url));
+    private function isEmpty() : bool {
+        return $this->host === ''
+            && $this->path->isEmpty()
+            && $this->file === ''
+            && $this->queryString === '';
     }
 
-    private function isParametersOnly(?string $url) : bool {
-        return substr(trim($url), 0, 1) === '?';
-    }
+    public function navigateTo(string $destination) : Url {
+        $dest = new Url($destination);
 
-    public function navigateTo(?string $destination) : Url {
-        $destination = trim($destination);
-
-        if (empty($destination)) {
-            return $this->normalize();
-        } else if ($this->isAbsolute($destination)) {
+        if ($dest->hasHostPart()) {
             return new Url($destination);
-        } else if ($this->isParametersOnly($destination)) {
-            return new Url($this->fromParts(
-                $this->host, $this->path, substr($destination, 1)));
+        } else if ($dest->isEmpty()) {
+            return $this;
         }
 
-        $path = $this->path->removeFilePart();
+        $newUrl = new Url('');
+        $newUrl->host = $this->host;
+        $newUrl->path = $this->path->cd($dest->path);
 
-        $newPath = $path->extend(new Path($destination));
+        $newUrl->file = ($dest->file || !$dest->path->isEmpty())
+            ? $dest->file : $this->file;
 
-        $newUrl = new Url($this->host . $newPath->asAbsolute()->asString());
-
-        return $newUrl->normalize();
-    }
-
-    public function normalize() : Url {
-
-        $newUrl = new Url($this->host);
-
-        $newUrl->path = $this->path->normalize();
-
-        if ($newUrl->path->isRoot() && empty($this->getQueryString())) {
-            $newUrl->path = new Path('');
-        }
-
-        $newUrl->queryString = $this->queryString;
+        $newUrl->queryString = $dest->queryString;
 
         return $newUrl;
-    }
-
-    private function getHost($fullUrl) : ?string {
-        $hostRegex = '/^https?:\/\/[\w.]+(:\d+)?/';
-        preg_match($hostRegex, $fullUrl, $matches);
-        return $matches[0] ?? '';
-    }
-
-    private function getPath($fullUrl) : ?string {
-        $host = $this->getHost($fullUrl);
-
-        if ($host === '') {
-            return $fullUrl;
-        }
-
-        $fullUrl = str_replace($host, '', $fullUrl);
-
-        $parts = explode('?', $fullUrl, 2);
-
-        return $parts[0] ?? '';
     }
 
     public function getQueryString() : string {
@@ -105,6 +103,8 @@ class Url {
     public function addRequestParameter(string $key, string $value) {
         if ($this->queryString) {
             $this->queryString .= '&';
+        } else {
+            $this->queryString .= '?';
         }
 
         $this->queryString .= "$key=$value";
