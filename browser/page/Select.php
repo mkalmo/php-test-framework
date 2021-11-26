@@ -7,9 +7,11 @@ use \RuntimeException;
 class Select extends AbstractInput {
 
     private array $options = [];
+    private bool $isMultiple;
 
-    public function __construct(string $name) {
+    public function __construct(string $name, bool $isMultiple = false) {
         parent::__construct($name);
+        $this->isMultiple = $isMultiple;
     }
 
     public function addOption(?string $value, string $text, bool $selected) {
@@ -30,6 +32,10 @@ class Select extends AbstractInput {
         }
 
         return false;
+    }
+
+    public function isMultiple() : bool {
+        return $this->isMultiple;
     }
 
     public function selectOptionWithText(string $text) {
@@ -71,16 +77,18 @@ class Select extends AbstractInput {
     }
 
     public function getValue() : string {
-        if (empty($this->options)) {
+        if (!count($this->options)) {
             return '';
         }
 
-        foreach ($this->options as $each) {
+        foreach (array_reverse($this->options) as $each) {
             if ($each->isSelected()) {
                 return $each->getValue();
             }
         }
 
-        return $this->options[0]->getValue();
+        return $this->isMultiple
+            ? ''
+            : $this->options[0]->getValue();
     }
 }

@@ -106,8 +106,9 @@ class FormBuilder {
 
     private function createSelect($element) : Select {
         $name = $element->getAttributeValue('name') ?? '';
+        $isMultiple = $element->hasAttribute('multiple');
 
-        $select = new Select($name);
+        $select = new Select($name, $isMultiple);
 
         $options = $this->nodeTree->findChildNodesByTagNames($element, ['option']);
 

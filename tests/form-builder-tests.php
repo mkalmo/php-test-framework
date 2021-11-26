@@ -53,6 +53,19 @@ function buildsSelect() {
     assertThat($select->getValue(), is('v2'));
 }
 
+function buildsMultiSelect() {
+    $html = "<form>
+             <select name='ms1' multiple>
+             <option>Value 1</option>
+             <option>Value 1</option>
+             </select>
+             </form>";
+
+    $select = getFormSet($html)->getSelectByName('ms1');
+
+    assertThat($select->isMultiple(), is(true));
+}
+
 function buildsSelectOddCases() {
     $html = "<form>
              <select name='s1'>

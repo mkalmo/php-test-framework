@@ -42,6 +42,23 @@ function selectTest() {
     assertThat($select->hasOptionWithLabel("Value 4"), is(false));
 }
 
+function selectLastValueIfMultipleOptionsSelected() {
+    $select = new Select('s1', true);
+
+    $select->addOption("v1", "Value 1", true);
+    $select->addOption("v2", "Value 2", true);
+
+    assertThat($select->getValue(), is('v2'));
+}
+
+function multiselectHasNoDefault() {
+    $select = new Select('s1', true);
+
+    $select->addOption("v1", "Value 1", false);
+
+    assertThat($select->getValue(), is(''));
+}
+
 function checkboxTest() {
     $checkbox = new Checkbox('c1', 'on');
 
