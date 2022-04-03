@@ -50,35 +50,32 @@ class Url {
     }
 
     public function asString() : string {
-        if ($this->host !== ''
-            && $this->path->isRoot()
-            && $this->file === ''
-            && $this->queryString === '') {
+        if ($this->host
+            && ($this->path->isEmpty() || $this->path->isRoot())
+            && !$this->file
+            && !$this->queryString) {
 
             return $this->host;
         }
 
         return $this->host
+            . ($this->host && !$this->path->isAbsolute() ? '/' : '')
             . $this->path->asString()
             . $this->file
             . $this->queryString;
     }
 
-    private function hasHostPart() : bool {
-        return $this->host !== '';
-    }
-
     private function isEmpty() : bool {
-        return $this->host === ''
+        return !$this->host
             && $this->path->isEmpty()
-            && $this->file === ''
-            && $this->queryString === '';
+            && !$this->file
+            && !$this->queryString;
     }
 
     public function navigateTo(string $destination) : Url {
         $dest = new Url($destination);
 
-        if ($dest->hasHostPart()) {
+        if ($dest->host) {
             return new Url($destination);
         } else if ($dest->isEmpty()) {
             return $this;

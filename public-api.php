@@ -409,6 +409,12 @@ function isAnyOf(...$values) : stf\matcher\AbstractMatcher {
 }
 
 function extendIncludePath(array $argv, string $userDefinedDir) {
+    $path = getProjectPath($argv, $userDefinedDir);
+
+    set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+}
+
+function getProjectPath(array $argv, string $userDefinedDir) {
     $path = count($argv) === 2 ? $argv[1] : $userDefinedDir;
 
     if (!$path) {
@@ -421,5 +427,5 @@ function extendIncludePath(array $argv, string $userDefinedDir) {
         die("Value in PROJECT_DIRECTORY is not correct directory");
     }
 
-    set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+    return $path;
 }

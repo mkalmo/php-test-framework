@@ -1,5 +1,7 @@
 <?php
 
+const TIMEOUT = 3; // tests should run under 3 seconds
+
 const ERROR_G01 = 'G01'; // unexpected
 
 const ERROR_C01 = 'C01'; // message should be enough

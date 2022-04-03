@@ -25,7 +25,11 @@ function getFormSet() : FormSet {
 function getGlobals() : Globals {
     $key = "---STF-GLOBALS---";
 
-    return $GLOBALS[$key] ??= new Globals();
+    if (!isset($GLOBALS[$key])) {
+        $GLOBALS[$key] = new Globals();
+    }
+
+    return $GLOBALS[$key];
 }
 
 function getElementWithId($id) : ?Element {

@@ -49,7 +49,7 @@ function asString() {
     assertThat(url('http://db.lh')->asString(), is('http://db.lh'));
 }
 
-function hostname() {
+function fromHostname() {
     assertThat(url('http://lh')->navigateTo('')->asString(), is('http://lh'));
     assertThat(url('http://lh')->navigateTo('.')->asString(), is('http://lh'));
     assertThat(url('http://lh')->navigateTo('./')->asString(), is('http://lh'));
@@ -59,9 +59,14 @@ function hostname() {
     assertThat(url('http://lh')->navigateTo('/../../.')->asString(), is('http://lh'));
 
     assertThat(url('http://lh')->navigateTo('/../a')->asString(), is('http://lh/a'));
+
+    assertThat(url('http://lh')->navigateTo('a.html')->asString(), is('http://lh/a.html'));
+    assertThat(url('http://lh')->navigateTo('a/a.html')->asString(), is('http://lh/a/a.html'));
+    assertThat(url('http://lh')->navigateTo('a/')->asString(), is('http://lh/a/'));
+    assertThat(url('http://lh')->navigateTo('?a=1')->asString(), is('http://lh/?a=1'));
 }
 
-function hostnameSlash() {
+function fromHostnameSlash() {
     assertThat(url('http://lh/')->navigateTo('')->asString(), is('http://lh'));
     assertThat(url('http://lh/?a=1')->navigateTo('')->asString(), is('http://lh/?a=1'));
     assertThat(url('http://lh/')->navigateTo('.')->asString(), is('http://lh'));
