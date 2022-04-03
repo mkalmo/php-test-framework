@@ -4,7 +4,7 @@ require_once '../public-api.php';
 
 const BASE_URL = 'http://localhost:8080';
 
-function submittingFormAddsPersonToList() {
+function submittingFormAddsBookToList() {
     gotoLandingPage();
 
     clickBookFormLink();

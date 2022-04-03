@@ -12,6 +12,10 @@ class FormSet {
         $this->forms[] = $form;
     }
 
+    public function getFormCount() : int {
+        return count($this->forms);
+    }
+
     public function getButtonByName(string $buttonName) : ?Button {
         return $this->getButtonByNameAndValue($buttonName, null);
     }
@@ -30,7 +34,7 @@ class FormSet {
         return $this->getFieldByNameAndType($fieldName, TextField::class);
     }
 
-    private function getFieldByNameAndType(string $fieldName, $type) {
+    public function getFieldByNameAndType(string $fieldName, $type) {
         $form = $this->findFormContainingField($fieldName);
 
         return $form ? $form->getFieldByNameAndType($fieldName, $type) : null;

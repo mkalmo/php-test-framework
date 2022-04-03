@@ -159,24 +159,6 @@ function doesNotAllowSqlInjectionWhenAddingAuthor() {
     assertThat(getPageText(), containsString($dangerousLastName));
 }
 
-#Helpers
-
-function insertSampleAuthor() : string {
-
-    gotoLandingPage();
-
-    clickAuthorFormLink();
-
-    $author = getSampleAuthor();
-
-    setTextFieldValue('firstName', $author->firstName);
-    setTextFieldValue('lastName', $author->lastName);
-
-    clickAuthorFormSubmitButton();
-
-    return $author->firstName . ' ' . $author->lastName;
-}
-
 setBaseUrl(BASE_URL);
 setLogRequests(false);
 setLogPostParameters(false);

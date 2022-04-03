@@ -4,11 +4,11 @@ const MAX_POINTS = 4;
 const RESULT_PATTERN = "\nRESULT: %s of %s points\n";
 
 function getPageId() : ?string {
-    return stf\getGlobals()->page->getId();
+    return getBrowser()->getPageId();
 }
 
 function gotoLandingPage() {
-    $landingPageUrl = stf\getGlobals()->baseUrl->asString();
+    $landingPageUrl = getGlobals()->baseUrl->asString();
 
     navigateTo($landingPageUrl);
 

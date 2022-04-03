@@ -19,12 +19,17 @@ include_once __DIR__ . '/simpletest/user_agent.php';
 
 require_once 'autoload.php';
 
+use stf\browser\page\FieldType;
+use stf\Globals;
 use stf\matcher\ContainsMatcher;
 use stf\matcher\AbstractMatcher;
 use stf\matcher\ContainsStringMatcher;
 use stf\matcher\ContainsNotStringMatcher;
-use function stf\getGlobals;
-use function stf\getFormSet;
+use stf\browser\Browser;
+
+function getBrowser() : Browser {
+    return getGlobals()->browser;
+}
 
 function assertThrows($function): void {
     try {
@@ -55,12 +60,12 @@ function assertThat($actual, stf\matcher\AbstractMatcher $matcher, $message = nu
 }
 
 function disableAutomaticRedirects() : void {
-    getGlobals()->maxRedirectCount = 0;
+    getBrowser()->maxRedirectCount = 0;
 }
 
 function setBaseUrl(string $url) : void {
     getGlobals()->baseUrl = new stf\browser\Url($url);
-    getGlobals()->currentUrl = new stf\browser\Url($url);
+    getBrowser()->setCurrentUrl($url);
 }
 
 function setLogRequests(bool $flag) : void {
@@ -84,11 +89,11 @@ function getResponseCode() : int {
 }
 
 function getCurrentUrl() : string {
-    return getGlobals()->currentUrl->asString();
+    return getBrowser()->getCurrentUrl();
 }
 
 function printPageSource() : void {
-    print getGlobals()->page->getSource() . PHP_EOL;
+    print getPageSource() . PHP_EOL;
 }
 
 function printPageText() : void {
@@ -96,24 +101,24 @@ function printPageText() : void {
 }
 
 function getPageText() : string {
-    return getGlobals()->page->getText();
+    return getBrowser()->getPageText();
 }
 
 function getPageSource() : string {
-    return getGlobals()->page->getSource();
+    return getBrowser()->getPageSource();
 }
 
 function assertPageContainsLinkWithId($linkId) : void {
-    $link = getGlobals()->page->getLinkById($linkId);
-
-    if ($link === null) {
-        fail(ERROR_W03,
-            sprintf("Current page does not contain link with id '%s'.", $linkId));
+    if (getBrowser()->hasLinkWithId($linkId)) {
+        return;
     }
+
+    fail(ERROR_W03,
+        sprintf("Current page does not contain link with id '%s'.", $linkId));
 }
 
 function assertPageContainsTextFieldWithName($name) : void {
-    if (getFormSet()->getTextFieldByName($name) !== null) {
+    if (getBrowser()->hasFieldByName($name, FieldType::TextField)) {
         return;
     }
 
@@ -122,7 +127,7 @@ function assertPageContainsTextFieldWithName($name) : void {
 }
 
 function assertPageContainsRadioWithName($name) : void {
-    if (getFormSet()->getRadioByName($name) !== null) {
+    if (getBrowser()->hasFieldByName($name, FieldType::Radio)) {
         return;
     }
 
@@ -131,7 +136,7 @@ function assertPageContainsRadioWithName($name) : void {
 }
 
 function assertPageContainsSelectWithName($name) : void {
-    if (getFormSet()->getSelectByName($name) !== null) {
+    if (getBrowser()->hasFieldByName($name, FieldType::Select)) {
         return;
     }
 
@@ -140,7 +145,7 @@ function assertPageContainsSelectWithName($name) : void {
 }
 
 function assertPageContainsFieldWithName($name) : void {
-    if (getFormSet()->getFieldByName($name) !== null) {
+    if (getBrowser()->hasFieldByName($name, FieldType::Any)) {
         return;
     }
 
@@ -149,7 +154,7 @@ function assertPageContainsFieldWithName($name) : void {
 }
 
 function assertPageDoesNotContainFieldWithName($name) : void {
-    if (getFormSet()->getFieldByName($name) === null) {
+    if (!getBrowser()->hasFieldByName($name, FieldType::Any)) {
         return;
     }
 
@@ -158,7 +163,7 @@ function assertPageDoesNotContainFieldWithName($name) : void {
 }
 
 function assertPageDoesNotContainButtonWithName($name) : void {
-    if (getFormSet()->getButtonByName($name) === null) {
+    if (!getBrowser()->hasFieldByName($name, FieldType::Button)) {
         return;
     }
 
@@ -167,7 +172,7 @@ function assertPageDoesNotContainButtonWithName($name) : void {
 }
 
 function assertPageContainsCheckboxWithName($name) : void {
-    if (getFormSet()->getCheckboxByName($name) !== null) {
+    if (getBrowser()->hasFieldByName($name, FieldType::Checkbox)) {
         return;
     }
 
@@ -176,7 +181,7 @@ function assertPageContainsCheckboxWithName($name) : void {
 }
 
 function assertPageContainsButtonWithName($name) : void {
-    if (getFormSet()->getButtonByName($name) !== null) {
+    if (getBrowser()->hasFieldByName($name, FieldType::Button)) {
         return;
     }
 
@@ -186,18 +191,16 @@ function assertPageContainsButtonWithName($name) : void {
 }
 
 function assertPageContainsLinkWithText($text) : void {
-    $link = getGlobals()->page->getLinkByText($text);
-
-    if ($link === null) {
-        fail(ERROR_W04,
-            sprintf("Current page does not contain link with text '%s'.", $text));
+    if (getBrowser()->hasLinkWithText($text)) {
+        return;
     }
+
+    fail(ERROR_W04,
+        sprintf("Current page does not contain link with text '%s'.", $text));
 }
 
 function assertPageContainsElementWithId($id) : void {
-    $element = stf\getElementWithId($id);
-
-    if ($element) {
+    if (getBrowser()->hasElementWithId($id)) {
         return;
     }
 
@@ -206,9 +209,7 @@ function assertPageContainsElementWithId($id) : void {
 }
 
 function assertPageDoesNotContainElementWithId($id) : void {
-    $element = stf\getElementWithId($id);
-
-    if (!$element) {
+    if (!getBrowser()->hasElementWithId($id)) {
         return;
     }
 
@@ -219,7 +220,7 @@ function assertPageDoesNotContainElementWithId($id) : void {
 function assertFrontControllerLink(string $id) : void {
     assertPageContainsLinkWithId($id);
 
-    $link = getGlobals()->page->getLinkById($id)->getHref();
+    $link = getBrowser()->getLinkHrefById($id);
 
     $pattern = '/^(index\.php)?\??[-=&\w]*$/';
 
@@ -232,9 +233,7 @@ function assertFrontControllerLink(string $id) : void {
 }
 
 function assertPageContainsText($textToBeFound) : void {
-    $pageText = getGlobals()->page->getText();
-
-    if (strpos($pageText, $textToBeFound) !== false) {
+    if (strpos(getPageText(), $textToBeFound) !== false) {
         return;
     }
 
@@ -243,7 +242,7 @@ function assertPageContainsText($textToBeFound) : void {
 }
 
 function assertNoOutput() : void {
-    $source = getGlobals()->page->getSource();
+    $source = getPageSource();
 
     if (preg_match('/^\s*$/', $source)) {
         return;
@@ -255,7 +254,7 @@ function assertNoOutput() : void {
 }
 
 function assertCurrentUrl($expected) : void {
-    $actual = getGlobals()->currentUrl->asString();
+    $actual = getBrowser()->getCurrentUrl();
 
     if ($actual !== $expected) {
         fail(ERROR_H03, sprintf("Expected url to be '%s' but was '%s'",
@@ -266,118 +265,86 @@ function assertCurrentUrl($expected) : void {
 function clickLinkWithText($text) : void {
     assertPageContainsLinkWithText($text);
 
-    $link = getGlobals()->page->getLinkByText($text);
-
-    stf\navigateTo($link->getHref());
+    getBrowser()->clickLinkWithText($text);
 }
 
 function getHrefFromLinkWithText(string $text) : string {
     assertPageContainsLinkWithText($text);
 
-    return getGlobals()->page->getLinkByText($text)->getHref();
-}
-
-function getTextFromLinkWithId(string $id) : string {
-    assertPageContainsLinkWithId($id);
-
-    return getGlobals()->page->getLinkById($id)->getText();
+    return getBrowser()->getLinkHrefByText($text);
 }
 
 function clickLinkWithId($linkId) : void {
     assertPageContainsLinkWithId($linkId);
 
-    $link = getGlobals()->page->getLinkById($linkId);
-
-    navigateTo($link->getHref());
+    getBrowser()->clickLinkWithId($linkId);
 }
 
 function navigateTo(string $url) {
-    stf\navigateTo($url);
+    getBrowser()->navigateTo($url);
 }
 
 function clickButton(string $buttonName, ?string $buttonValue = null) {
     assertPageContainsButtonWithName($buttonName);
 
-    stf\submitFormByButtonPress($buttonName, $buttonValue);
+    getBrowser()->submitFormByButtonPress($buttonName, $buttonValue);
 }
 
 function setTextFieldValue(string $fieldName, string $value) {
     assertPageContainsTextFieldWithName($fieldName);
 
-    getFormSet()->getTextFieldByName($fieldName)->setValue($value);
+    getBrowser()->setTextFieldValue($fieldName, $value);
 }
 
 function forceFieldValue(string $fieldName, string $value) {
     assertPageContainsFieldWithName($fieldName);
 
-    $form = getFormSet()->findFormContainingField($fieldName);
-
-    $form->deleteFieldByName($fieldName);
-
-    $form->addTextField($fieldName, $value);
+    getBrowser()->forceFieldValue($fieldName, $value);
 }
 
-function selectOptionWithText(string $fieldName, string $text) {
+function selectOptionWithText(string $fieldName, string $text) : void {
     assertPageContainsSelectWithName($fieldName);
 
-    $select = stf\getFormSet()->getSelectByName($fieldName);
-
-    if ($select->hasOptionWithLabel($text)) {
-        $select->selectOptionWithText($text);
+    if (getBrowser()->hasSelectOptionWithLabel($fieldName, $text)) {
+        getBrowser()->selectOptionWithLabel($fieldName, $text);
     } else {
         fail(ERROR_W12, sprintf("select with name '%s' does not have option '%s'",
             $fieldName, $text));
     }
-
-    getFormSet()->getSelectByName($fieldName)->selectOptionWithText($text);
 }
 
 function setCheckboxValue(string $fieldName, bool $value) {
     assertPageContainsCheckboxWithName($fieldName);
 
-    getFormSet()->getCheckboxByName($fieldName)->check($value);
+    getBrowser()->setCheckboxValue($fieldName, $value);
 }
 
 function setRadioFieldValue(string $fieldName, string $value) {
     assertPageContainsRadioWithName($fieldName);
 
-    $field = getFormSet()->getRadioByName($fieldName);
-
-    if ($field->hasOption($value)) {
-        $field->selectOption($value);
+    if (getBrowser()->hasRadioOption($fieldName, $value)) {
+        getBrowser()->setRadioValue($fieldName, $value);
     } else {
         fail(ERROR_W11, sprintf("radio with name '%s' does not have option '%s'",
             $fieldName, $value));
     }
-
 }
 
 function getFieldValue(string $fieldName) {
     assertPageContainsFieldWithName($fieldName);
 
-    $field = getFormSet()->getFieldByName($fieldName);
-
-    return $field instanceof stf\browser\page\Checkbox
-        ? $field->isChecked()
-        : $field->getValue();
-}
-
-function getButtonLabel(string $buttonName) : string {
-    assertPageContainsButtonWithName($buttonName);
-
-    return getFormSet()->getButtonByName($buttonName)->getLabel();
+    return getBrowser()->getFieldValue($fieldName);
 }
 
 function getSelectedOptionText(string $fieldName) : string {
     assertPageContainsSelectWithName($fieldName);
 
-    $select = getFormSet()->getSelectByName($fieldName);
-
-    return $select->getSelectedOptionText();
+    return getBrowser()->getSelectedOptionText($fieldName);
 }
 
 function deleteSessionCookie() : void {
-    getGlobals()->httpClient->deleteCookie(session_name());
+    throw new Error('not implemented');
+    // getGlobals()->httpClient->deleteCookie(session_name());
 }
 
 function is($value) : stf\matcher\AbstractMatcher {
@@ -428,4 +395,14 @@ function getProjectPath(array $argv, string $userDefinedDir) {
     }
 
     return $path;
+}
+
+function getGlobals() : Globals {
+    $key = "---STF-GLOBALS---";
+
+    if (!isset($GLOBALS[$key])) {
+        $GLOBALS[$key] = new Globals();
+    }
+
+    return $GLOBALS[$key];
 }
